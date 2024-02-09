@@ -8,7 +8,7 @@
     android:clipToPadding="false"
     android:overScrollMode="never"
     android:scrollbars="none"
-    android:background="@color/start_color"
+    android:background="@drawable/background_gradient"
     tools:context=".activities.SignInActivity">
 
     <LinearLayout
@@ -17,10 +17,15 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
+        <ImageView
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="@dimen/_70sdp"
+            android:layout_gravity="center"
+            android:background="@drawable/logo"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_40sdp"
+            android:layout_marginTop="@dimen/_20sdp"
             android:text="@string/welcome_back"
             android:textColor="@color/priramy_text"
             android:textSize="@dimen/_18ssp"

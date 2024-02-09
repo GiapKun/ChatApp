@@ -8,7 +8,7 @@
     android:clipToPadding="false"
     android:overScrollMode="never"
     android:scrollbars="none"
-    android:background="@color/start_color"
+    android:background="@drawable/background_gradient"
     tools:context=".activities.SignUpActivity">
 
     <LinearLayout
