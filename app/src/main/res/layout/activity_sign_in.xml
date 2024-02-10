@@ -15,17 +15,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/_20sdp">
 
         <ImageView
-            android:layout_width="@dimen/_70sdp"
+            android:layout_width="@dimen/_80sdp"
             android:layout_height="@dimen/_70sdp"
+            android:layout_marginTop="@dimen/_30sdp"
             android:layout_gravity="center"
             android:background="@drawable/logo"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_20sdp"
             android:text="@string/welcome_back"
             android:textColor="@color/priramy_text"
             android:textSize="@dimen/_18ssp"
@@ -36,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_4sdp"
             android:text="@string/login_to_continue"
-            android:textColor="@color/secondary_text"
+            android:textColor="@color/priramy_text"
             android:textSize="@dimen/_12ssp"
             android:textStyle="bold"
             />
@@ -48,12 +49,13 @@
             android:layout_marginTop="@dimen/_40sdp"
             android:background="@drawable/background_input"
             android:hint="@string/email"
+            android:textColorHint="@color/white"
             android:imeOptions="actionNext"
             android:importantForAutofill="no"
             android:inputType="textEmailAddress"
             android:paddingStart="@dimen/_16sdp"
             android:paddingEnd="@dimen/_16sdp"
-            android:textColor="@color/priramy_text"
+            android:textColor="@color/white"
             android:textSize="@dimen/_13ssp"
             />
 
@@ -63,15 +65,19 @@
             android:layout_height="@dimen/_45sdp"
             android:layout_marginTop="@dimen/_16sdp"
             android:background="@drawable/background_input"
+            android:drawableEnd="@drawable/ic_eye"
             android:hint="@string/password"
+            android:textColorHint="@color/white"
             android:imeOptions="actionDone"
             android:importantForAutofill="no"
             android:inputType="textPassword"
             android:paddingStart="@dimen/_16sdp"
-            android:paddingEnd="@dimen/_16sdp"
-            android:textColor="@color/priramy_text"
+            android:paddingEnd="@dimen/_6sdp"
+            android:textColor="@color/white"
             android:textSize="@dimen/_13ssp"
             />
+
+
 
         <FrameLayout
             android:layout_width="match_parent"
