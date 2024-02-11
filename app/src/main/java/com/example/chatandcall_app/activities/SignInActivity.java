@@ -7,7 +7,6 @@ import android.os.Bundle;
 
 import com.example.chatandcall_app.R;
 import com.example.chatandcall_app.databinding.ActivitySignInBinding;
-
 public class SignInActivity extends AppCompatActivity {
 
     private ActivitySignInBinding binding;
@@ -22,6 +21,5 @@ public class SignInActivity extends AppCompatActivity {
     private  void setListeners(){
         binding.textCreateNewAccount.setOnClickListener(v->
                 startActivity(new Intent(getApplicationContext(), SignUpActivity.class)));
-
     }
 }
