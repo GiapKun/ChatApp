@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:gravity="bottom"
+    android:padding="16dp"
+    android:background="@drawable/background_header">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/imageProfile"
+        android:layout_width="@dimen/_60sdp"
+        android:layout_height="@dimen/_60sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:background="@drawable/background_icon"
+        android:scaleType="centerCrop"
+        app:riv_corner_radius="@dimen/_8sdp"
+        />
+
+    <TextView
+        android:id="@+id/textName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello baby"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:gravity="start"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="@dimen/_26ssp"
+        android:paddingTop="10dp"
+        />
+</LinearLayout>

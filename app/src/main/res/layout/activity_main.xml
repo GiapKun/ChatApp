@@ -4,9 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/drawer_layout"
     android:animateLayoutChanges="true"
-    tools:context=".activities.MainActivity">
+    tools:context=".activities.MainActivity"
+    >
+    <!--    tools:openDrawer="start"-->
 
 
+    <include
+        layout="@layout/toolbar"/>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:headerLayout="@layout/header"
+        app:menu="@menu/nav_menu"
+        app:itemIconPadding="30dp"
+        android:layout_gravity="start"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>
