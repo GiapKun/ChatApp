@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -37,9 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     ImageButton buttonDrawerToggle;
-    RoundedImageView roundedImageView;
     NavigationView navigationView ;
-    TextView textName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         preferecnceManager = new PreferenceManager(getApplicationContext());
         buttonDrawerToggle = findViewById(R.id.buttonDrawerToggle);
+        navigationView = findViewById(R.id.nav_menu);
         loadUserDetails();
         setListeners();
         getToken();
@@ -87,10 +88,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadUserDetails(){
-        navigationView = findViewById(R.id.nav_menu);
         View headerView = navigationView.getHeaderView(0);
-        textName = headerView.findViewById(R.id.textName);
-        roundedImageView = headerView.findViewById(R.id.imageProfile);
+        TextView textName = headerView.findViewById(R.id.textName);
+        RoundedImageView roundedImageView = headerView.findViewById(R.id.imageProfile);
         textName.setText(preferecnceManager.getString(Constants.KEY_NAME));
         //Giải mã dữ liệu hình ảnh từ chuỗi Base64.
         byte[] bytes = Base64.decode(preferecnceManager.getString(Constants.KEY_IMAGE), Base64.DEFAULT);

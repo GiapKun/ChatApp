@@ -1,42 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/drawer_layout"
     android:animateLayoutChanges="true"
-    tools:context=".activities.MainActivity"
-    >
+    tools:context=".activities.MainActivity">
+    <!--    tools:openDrawer="start"-->
 
-
-
-    <include
-        layout="@layout/toolbar"/>
-
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nav_menu"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        app:headerLayout="@layout/header"
-        app:menu="@menu/nav_menu"
-        app:itemIconPadding="30dp"
-        android:layout_gravity="start"/>
+<!--    Add toolbar-->
+    <include layout="@layout/toolbar"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/_44sdp"
-        >
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <FrameLayout
+            android:id="@+id/frame_layout_content"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_58sdp"
             android:background="@drawable/background_content_bottom"
-            app:layout_constraintTop_toBottomOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             >
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/conversationsRecyclerView"
                 android:layout_width="match_parent"
@@ -46,15 +36,13 @@
                 android:overScrollMode="never"
                 android:padding="@dimen/_20sdp"
                 android:visibility="gone"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                />
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
             <ProgressBar
                 android:id="@+id/progressBar"
                 android:layout_width="@dimen/_25sdp"
                 android:layout_height="@dimen/_25sdp"
-                android:layout_gravity="center"
-                />
+                android:layout_gravity="center" />
 
         </FrameLayout>
 
@@ -62,18 +50,26 @@
             android:id="@+id/fabNewChat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/_18sdp"
+            android:layout_marginEnd="@dimen/_24sdp"
+            android:layout_marginRight="@dimen/_24sdp"
             android:layout_marginBottom="@dimen/_24sdp"
             android:contentDescription="@string/app_name"
             android:src="@drawable/ic_add"
             app:backgroundTint="@color/priramy"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:tint="@color/white"
-            />
+            app:tint="@color/white"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:headerLayout="@layout/header"
+        app:menu="@menu/nav_menu"
+        app:itemIconPadding="30dp"
+        app:dividerInsetStart="@dimen/_60sdp"
+        android:layout_gravity="start"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>
