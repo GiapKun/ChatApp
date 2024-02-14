@@ -79,9 +79,7 @@ public class SignInActivity extends AppCompatActivity {
         }
     }
 
-    //Hiển thị thông báo ngắn (toast) trên màn hình để thông báo về một sự kiện cụ thể
     private void showToast(String message){
-        //Toast là một lớp trong Android SDK dùng để hiển thị thông báo ngắn trên màn hình
         Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
     }
 

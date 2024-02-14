@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private  void setListeners() {
+        binding.fabNewChat.setOnClickListener(v -> startActivity( new Intent(getApplicationContext(), UsersActivity.class)));
         buttonDrawerToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                     showToast("This Home");
                 }
                 if (itemId == R.id.nav_info){
-                   showToast("This Information");
+                    showToast("This Information");
 
                 }
                 if (itemId == R.id.nav_setting){

@@ -1,29 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <Toolbar
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/start_color"
+        android:layout_height="@dimen/_60sdp"
+        android:background="@color/priramy"
         >
         <ImageButton
             android:id="@+id/buttonDrawerToggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginStart="@dimen/_16sdp"
             android:src="@drawable/ic_menu"
-            android:background="@android:color/transparent"
-            android:padding="6dp"/>
+            android:background="@drawable/background_icon"
+            app:tint="@color/white"
+            android:padding="@dimen/_6sdp"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello Chat"
-            android:layout_marginStart="@dimen/_90sdp"
-            android:textSize="@dimen/_20sdp"
-            android:textStyle="bold"
+            android:text="Home"
+            android:textSize="@dimen/_14ssp"
             android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_gravity="center"
             />
     </Toolbar>
 
