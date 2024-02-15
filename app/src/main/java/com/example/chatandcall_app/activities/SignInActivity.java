@@ -26,6 +26,7 @@ public class SignInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_in);
         setContentView(binding.getRoot());
         preferecnceManager = new PreferenceManager(getApplicationContext());
+        //Auto SignIn
         if(preferecnceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)){
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);

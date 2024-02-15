@@ -2,12 +2,14 @@ package com.example.chatandcall_app.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 import com.example.chatandcall_app.R;
 import com.example.chatandcall_app.adapters.UsersAdapter;
 import com.example.chatandcall_app.databinding.ActivityUsersBinding;
+import com.example.chatandcall_app.listeners.UserListener;
 import com.example.chatandcall_app.models.User;
 import com.example.chatandcall_app.utilities.Constants;
 import com.example.chatandcall_app.utilities.PreferenceManager;
@@ -18,7 +20,7 @@ import java.lang.ref.PhantomReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UsersActivity extends AppCompatActivity {
+public class UsersActivity extends AppCompatActivity implements UserListener {
 
     private ActivityUsersBinding binding;
     private PreferenceManager preferecnceManager;
@@ -63,7 +65,7 @@ public class UsersActivity extends AppCompatActivity {
                             users.add(user);
                         }
                         if(users.size() > 0){
-                            UsersAdapter usersAdapter =  new UsersAdapter(users);
+                            UsersAdapter usersAdapter =  new UsersAdapter(users, this);
                             binding.usersRecyclerView.setAdapter(usersAdapter);
                             binding.usersRecyclerView.setVisibility(View.VISIBLE);
                         }
@@ -91,5 +93,13 @@ public class UsersActivity extends AppCompatActivity {
     private void showErrorMessage(){
         binding.textErrorMessage.setText(String.format("%s", "No user available"));
         binding.textErrorMessage.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onUserClicked(User user) {
+        Intent intent = new Intent(getApplicationContext(), ChatActivity.class );
+        intent.putExtra(Constants.KEY_USER,user);
+        startActivity(intent);
+//        finish();
     }
 }
