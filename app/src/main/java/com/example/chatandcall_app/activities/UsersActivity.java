@@ -1,12 +1,10 @@
 package com.example.chatandcall_app.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.example.chatandcall_app.R;
 import com.example.chatandcall_app.adapters.UsersAdapter;
 import com.example.chatandcall_app.databinding.ActivityUsersBinding;
 import com.example.chatandcall_app.listeners.UserListener;
@@ -16,11 +14,10 @@ import com.example.chatandcall_app.utilities.PreferenceManager;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import java.lang.ref.PhantomReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UsersActivity extends AppCompatActivity implements UserListener {
+public class UsersActivity extends BaseActivity implements UserListener {
 
     private ActivityUsersBinding binding;
     private PreferenceManager preferecnceManager;
@@ -100,6 +97,5 @@ public class UsersActivity extends AppCompatActivity implements UserListener {
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class );
         intent.putExtra(Constants.KEY_USER,user);
         startActivity(intent);
-//        finish();
     }
 }

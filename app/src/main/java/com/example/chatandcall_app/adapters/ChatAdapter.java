@@ -16,11 +16,18 @@ import java.util.List;
 public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final List<ChatMessage> chatMessages;
-    private final Bitmap receiverProfileImage;
+    private Bitmap receiverProfileImage;
     private final String senderId;
 
     private static final int VIEW_TYPE_SENT = 1;
     private static final int VIEW_TYPE_RECEIVED = 2;
+
+    //Constructor
+    public ChatAdapter(List<ChatMessage> chatMessages, Bitmap receiverProfileImage, String senderId) {
+        this.chatMessages = chatMessages;
+        this.receiverProfileImage = receiverProfileImage;
+        this.senderId = senderId;
+    }
 
     @NonNull
     @Override
@@ -54,6 +61,8 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return chatMessages.size();
     }
 
+
+
     @Override
     public int getItemViewType(int position) {
         if(chatMessages.get(position).senderId.equals(senderId)){
@@ -64,16 +73,11 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    //Constructor
-    public ChatAdapter(List<ChatMessage> chatMessages, Bitmap receiverProfileImage, String senderId) {
-        this.chatMessages = chatMessages;
-        this.receiverProfileImage = receiverProfileImage;
-        this.senderId = senderId;
+
+
+    public void setReceiverProfileImage(Bitmap bitmap){
+        receiverProfileImage = bitmap;
     }
-
-
-
-
 
 
     static class SentMessageViewHolder extends RecyclerView.ViewHolder{
