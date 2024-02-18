@@ -62,7 +62,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
 
-
+    
     @Override
     public int getItemViewType(int position) {
         if(chatMessages.get(position).senderId.equals(senderId)){
