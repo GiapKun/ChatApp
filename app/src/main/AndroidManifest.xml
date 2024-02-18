@@ -21,7 +21,9 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activities.UsersActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            />
         <activity
             android:name=".activities.SignUpActivity"
             android:exported="false"
