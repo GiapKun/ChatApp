@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
+    <color name="black">#1D1D1D</color>
     <color name="white">#FFFFFFFF</color>
     <color name="secondary_text">#757575</color>
     <color name="priramy_text">#212121</color>
@@ -14,4 +14,8 @@
     <color name="green">#008000</color>
     <color name="start_color">#7C4DFF</color>
     <color name="end_color">#FF4081</color>
+    <color name="grey">#3BFFFFFF</color>
+    <color name="dark_grey">#ff424242</color>
+    <color name="lavender">#5C65DD</color>
+    <color name="color_edittext">#14000000</color>
 </resources>

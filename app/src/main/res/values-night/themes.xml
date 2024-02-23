@@ -2,6 +2,29 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.ChatandCall_App" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
+        <item name="colorPrimary">@color/start_color</item>
+        <item name="colorPrimaryVariant">@color/lavender</item>
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    </style>
+    <style name="CardBackground"><item name="android:backgroundTint">@color/grey</item></style>
+    <style name="TextColor"><item name="android:textColor">@color/white</item></style>
+    <style name="ScreenBackground"><item name="android:background">@color/black</item></style>
+    <style name="EdtEmail">
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:backgroundTint">@color/grey</item>
+        <item name="android:drawableLeft">@drawable/ic_email</item>
+    </style>
+    <style name="EdtPassword">
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:backgroundTint">@color/grey</item>
+        <item name="android:drawableLeft">@drawable/ic_lock</item>
+    </style>
+    <style name="EdtUsername">
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:backgroundTint">@color/grey</item>
+        <item name="android:drawableLeft">@drawable/ic_person</item>
     </style>
 </resources>

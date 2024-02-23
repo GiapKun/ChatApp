@@ -3,8 +3,12 @@ package com.example.chatandcall_app.activities;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.SwitchCompat;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -15,6 +19,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.chatandcall_app.R;
 import com.example.chatandcall_app.databinding.ActivitySignUpBinding;
 import com.example.chatandcall_app.utilities.Constants;
 import com.example.chatandcall_app.utilities.PreferenceManager;
@@ -26,6 +31,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 public class SignUpActivity extends AppCompatActivity {
+    SwitchCompat switchMode;
+    boolean nightMode;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
     private ActivitySignUpBinding binding;
     private PreferenceManager preferenceManager;
@@ -37,6 +46,34 @@ public class SignUpActivity extends AppCompatActivity {
         preferenceManager =new PreferenceManager(getApplicationContext());
         setContentView(binding.getRoot());
         setListeners();
+
+        switchMode = findViewById(R.id.switchMode);
+
+        sharedPreferences = getSharedPreferences("Mode", Context.MODE_PRIVATE);
+        nightMode = sharedPreferences.getBoolean("nightMode", false);
+
+        if(nightMode)
+        {
+            switchMode.setChecked(true);
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        }
+
+        switchMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(nightMode)
+                {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    editor = sharedPreferences.edit();
+                    editor.putBoolean("nightMode", false);
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    editor = sharedPreferences.edit();
+                    editor.putBoolean("nightMode", true);
+                }
+                editor.apply();
+            }
+        });
     }
     private void setListeners(){
         binding.textSignIn.setOnClickListener(v -> onBackPressed());
