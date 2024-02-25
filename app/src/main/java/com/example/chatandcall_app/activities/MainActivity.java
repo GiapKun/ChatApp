@@ -7,26 +7,34 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.chatandcall_app.R;
 import com.example.chatandcall_app.adapters.RecentConversationsAdapter;
+import com.example.chatandcall_app.adapters.UsersAdapter;
 import com.example.chatandcall_app.databinding.ActivityMainBinding;
 import com.example.chatandcall_app.listeners.ConversionListener;
 import com.example.chatandcall_app.models.ChatMessage;
 import com.example.chatandcall_app.models.User;
 import com.example.chatandcall_app.utilities.Constants;
 import com.example.chatandcall_app.utilities.PreferenceManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -157,6 +165,98 @@ public class MainActivity extends BaseActivity implements ConversionListener {
         intent.putExtra(Constants.KEY_USER,user);
         startActivity(intent);
     }
+    @Override
+    public void onConversionHold(User user) {
+        PopupMenu popupMenu = new PopupMenu(getApplicationContext(), binding.progressBar);
+        popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.item1) {
+                      deleteChats(preferecnceManager.getString(Constants.KEY_USER_ID),user.id);
+                      deleteChats(user.id,preferecnceManager.getString(Constants.KEY_USER_ID));
+                      deleteConversation(user.id,preferecnceManager.getString(Constants.KEY_USER_ID));
+                      deleteConversation(preferecnceManager.getString(Constants.KEY_USER_ID),user.id);
+                      listenConversations();
+                }
+                if (item.getItemId() == R.id.item2) {
+                    Toast.makeText(MainActivity.this,"You Clicked : " + item.getTitle(),Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+        });
+        popupMenu.show();
+    }
+
+    public void deleteConversation(String senderId, String receiverId){
+        database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
+                .whereEqualTo(Constants.KEY_SENDER_ID,senderId)
+                .whereEqualTo(Constants.KEY_RECEIVER_ID,receiverId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null){
+                            for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                                // Get the document ID
+                                String documentId = queryDocumentSnapshot.getId();
+
+                                // Delete the document
+                                database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
+                                        .document(documentId)
+                                        .delete()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d("Results", "Conservation deleted successfully");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w("Results", "Error deleting conservation", e);
+                                            }
+                                        });
+                            }
+                        }
+                    }
+                });
+    }
+
+    public void deleteChats(String senderId, String receiverId) {
+    database.collection(Constants.KEY_COLLECTION_CHAT)
+            .whereEqualTo(Constants.KEY_SENDER_ID, senderId)
+            .whereEqualTo(Constants.KEY_RECEIVER_ID, receiverId)
+            .get()
+            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                            // Get the document ID
+                            String documentId = queryDocumentSnapshot.getId();
+
+                            // Delete the document
+                            database.collection(Constants.KEY_COLLECTION_CHAT)
+                                    .document(documentId)
+                                    .delete()
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d("Results", "Chat deleted successfully");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w("Results", "Error deleting chat", e);
+                                        }
+                                    });
+                        }
+                    }
+
+                }
+            });
+}
 
     private void listenConversations() {
         database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
@@ -206,7 +306,6 @@ public class MainActivity extends BaseActivity implements ConversionListener {
                     }
                 }
             }
-
             Collections.sort(conversations, (obj1, obj2) -> obj2.dateObject.compareTo(obj1.dateObject));
             conversationsAdapter.notifyDataSetChanged();
             binding.conversationsRecyclerView.smoothScrollToPosition(0);
@@ -214,5 +313,4 @@ public class MainActivity extends BaseActivity implements ConversionListener {
             binding.progressBar.setVisibility(View.GONE);
         }
     };
-
 }

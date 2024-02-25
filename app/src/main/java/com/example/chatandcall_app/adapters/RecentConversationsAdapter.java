@@ -2,8 +2,10 @@ package com.example.chatandcall_app.adapters;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.util.Base64;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -69,6 +71,23 @@ public class RecentConversationsAdapter extends RecyclerView.Adapter<RecentConve
                 user.name= chatMessage.conversionName;
                 user.image = chatMessage.conversionImage;
                 conversionListener.onConversionClicked(user);
+            });
+            binding.getRoot().setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Handler handler = new Handler();
+                    User user = new User();
+                    user.id = chatMessage.conversionId;
+                    user.name= chatMessage.conversionName;
+                    user.image = chatMessage.conversionImage;
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            conversionListener.onConversionHold(user);
+                        }
+                    }, 1000);
+                    return true;
+                }
             });
         }
     }
