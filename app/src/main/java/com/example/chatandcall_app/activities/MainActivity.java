@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import com.example.chatandcall_app.R;
 import com.example.chatandcall_app.adapters.RecentConversationsAdapter;
-import com.example.chatandcall_app.adapters.UsersAdapter;
 import com.example.chatandcall_app.databinding.ActivityMainBinding;
 import com.example.chatandcall_app.listeners.ConversionListener;
 import com.example.chatandcall_app.models.ChatMessage;
@@ -172,11 +171,8 @@ public class MainActivity extends BaseActivity implements ConversionListener {
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.item1) {
-                      deleteChats(preferecnceManager.getString(Constants.KEY_USER_ID),user.id);
-                      deleteChats(user.id,preferecnceManager.getString(Constants.KEY_USER_ID));
                       deleteConversation(user.id,preferecnceManager.getString(Constants.KEY_USER_ID));
                       deleteConversation(preferecnceManager.getString(Constants.KEY_USER_ID),user.id);
-                      listenConversations();
                 }
                 if (item.getItemId() == R.id.item2) {
                     Toast.makeText(MainActivity.this,"You Clicked : " + item.getTitle(),Toast.LENGTH_SHORT).show();
@@ -208,6 +204,9 @@ public class MainActivity extends BaseActivity implements ConversionListener {
                                             @Override
                                             public void onSuccess(Void aVoid) {
                                                 Log.d("Results", "Conservation deleted successfully");
+                                                // Sau khi xóa conversation, cập nhật giao diện:
+                                                conversations.removeIf(conversation -> conversation.senderId.equals(senderId) && conversation.receiverId.equals(receiverId));
+                                                conversationsAdapter.notifyDataSetChanged();
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
