@@ -1,6 +1,7 @@
 package com.example.chatandcall_app.activities;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -51,6 +53,7 @@ public class MainActivity extends BaseActivity implements ConversionListener {
     private List<ChatMessage> conversations;
     private RecentConversationsAdapter conversationsAdapter;
     private FirebaseFirestore database;
+    private int currentPosition = RecyclerView.NO_POSITION;
 
 
     ImageButton buttonDrawerToggle;
@@ -166,23 +169,43 @@ public class MainActivity extends BaseActivity implements ConversionListener {
     }
     @Override
     public void onConversionHold(User user) {
-        PopupMenu popupMenu = new PopupMenu(getApplicationContext(), binding.progressBar);
-        popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getItemId() == R.id.item1) {
-                      deleteConversation(user.id,preferecnceManager.getString(Constants.KEY_USER_ID));
-                      deleteConversation(preferecnceManager.getString(Constants.KEY_USER_ID),user.id);
+        binding.conversationsRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                View childView = rv.findChildViewUnder(e.getX(), e.getY());
+                if (childView != null) {
+                    currentPosition = rv.getChildAdapterPosition(childView);
                 }
-                if (item.getItemId() == R.id.item2) {
-                    Toast.makeText(MainActivity.this,"You Clicked : " + item.getTitle(),Toast.LENGTH_SHORT).show();
-                }
-                return true;
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
             }
         });
-        popupMenu.show();
+        if (currentPosition >= 0 )
+        {
+            PopupMenu popupMenu = new PopupMenu(getApplicationContext(), binding.conversationsRecyclerView.getChildAt(currentPosition ));
+            popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                public boolean onMenuItemClick(MenuItem item) {
+                    if (item.getItemId() == R.id.item1) {
+                        deleteConversation(user.id,preferecnceManager.getString(Constants.KEY_USER_ID));
+                        deleteConversation(preferecnceManager.getString(Constants.KEY_USER_ID),user.id);
+                    }
+                    if (item.getItemId() == R.id.item2) {
+                        Toast.makeText(MainActivity.this,"You Clicked : " + item.getTitle(),Toast.LENGTH_SHORT).show();
+                    }
+                    return true;
+                }
+            });
+            popupMenu.show();
+        }
     }
-
     public void deleteConversation(String senderId, String receiverId){
         database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
                 .whereEqualTo(Constants.KEY_SENDER_ID,senderId)
