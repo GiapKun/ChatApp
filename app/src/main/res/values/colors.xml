@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#1D1D1D</color>
+    <color name="black">#333333</color>
+    <color name="black1">#000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="secondary_text">#757575</color>
     <color name="priramy_text">#212121</color>

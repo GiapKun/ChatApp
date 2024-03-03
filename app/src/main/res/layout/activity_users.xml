@@ -38,8 +38,8 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        style="@style/ScreenBackground"
         android:layout_marginTop="@dimen/_16sdp"
-        android:background="@drawable/background_content_bottom"
         app:layout_constraintTop_toBottomOf="@+id/imageBack"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -53,6 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/background_searchview"
+                style="@style/SearchView"
                 android:layout_margin="@dimen/_8sdp"
                 />
 
@@ -97,7 +98,7 @@
                 android:layout_marginStart="@dimen/_24sdp"
                 android:layout_marginEnd="@dimen/_24sdp"
                 android:gravity="center"
-                android:textColor="@color/error"
+                style="@style/ColorError"
                 android:textSize="@dimen/_12ssp"
                 android:visibility="gone" />
         </LinearLayout>

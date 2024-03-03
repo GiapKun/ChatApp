@@ -20,10 +20,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SignInActivity extends AppCompatActivity {
-    SwitchCompat switchMode;
-    boolean nightMode;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
+
 
     private ActivitySignInBinding binding;
     private PreferenceManager preferecnceManager;
@@ -34,33 +31,6 @@ public class SignInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_in);
         setContentView(binding.getRoot());
 
-        switchMode = findViewById(R.id.switchMode);
-
-        sharedPreferences = getSharedPreferences("Mode", Context.MODE_PRIVATE);
-        nightMode = sharedPreferences.getBoolean("nightMode", false);
-
-        if(nightMode)
-        {
-            switchMode.setChecked(true);
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        }
-
-        switchMode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(nightMode)
-                {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    editor = sharedPreferences.edit();
-                    editor.putBoolean("nightMode", false);
-                } else {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    editor = sharedPreferences.edit();
-                    editor.putBoolean("nightMode", true);
-                }
-                editor.apply();
-            }
-        });
         preferecnceManager = new PreferenceManager(getApplicationContext());
         //Auto SignIn
         if(preferecnceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)){

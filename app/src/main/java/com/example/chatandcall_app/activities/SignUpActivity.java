@@ -31,10 +31,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 public class SignUpActivity extends AppCompatActivity {
-    SwitchCompat switchMode;
-    boolean nightMode;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
 
     private ActivitySignUpBinding binding;
     private PreferenceManager preferenceManager;
@@ -46,34 +42,6 @@ public class SignUpActivity extends AppCompatActivity {
         preferenceManager =new PreferenceManager(getApplicationContext());
         setContentView(binding.getRoot());
         setListeners();
-
-        switchMode = findViewById(R.id.switchMode);
-
-        sharedPreferences = getSharedPreferences("Mode", Context.MODE_PRIVATE);
-        nightMode = sharedPreferences.getBoolean("nightMode", false);
-
-        if(nightMode)
-        {
-            switchMode.setChecked(true);
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        }
-
-        switchMode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(nightMode)
-                {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    editor = sharedPreferences.edit();
-                    editor.putBoolean("nightMode", false);
-                } else {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    editor = sharedPreferences.edit();
-                    editor.putBoolean("nightMode", true);
-                }
-                editor.apply();
-            }
-        });
     }
     private void setListeners(){
         binding.textSignIn.setOnClickListener(v -> onBackPressed());
