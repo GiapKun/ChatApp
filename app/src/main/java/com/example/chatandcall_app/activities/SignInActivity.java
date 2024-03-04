@@ -1,8 +1,12 @@
 package com.example.chatandcall_app.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.SwitchCompat;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -17,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SignInActivity extends AppCompatActivity {
 
+
     private ActivitySignInBinding binding;
     private PreferenceManager preferecnceManager;
     @Override
@@ -25,6 +30,7 @@ public class SignInActivity extends AppCompatActivity {
         binding= ActivitySignInBinding.inflate(getLayoutInflater());
         setContentView(R.layout.activity_sign_in);
         setContentView(binding.getRoot());
+
         preferecnceManager = new PreferenceManager(getApplicationContext());
         //Auto SignIn
         if(preferecnceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)){

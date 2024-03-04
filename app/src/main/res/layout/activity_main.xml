@@ -22,9 +22,9 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/_58sdp"
-            android:background="@drawable/background_content_bottom"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            style="@style/ScreenBackground"
             >
 
             <androidx.recyclerview.widget.RecyclerView
@@ -55,10 +55,9 @@
             android:layout_marginBottom="@dimen/_24sdp"
             android:contentDescription="@string/app_name"
             android:src="@drawable/ic_add"
-            app:backgroundTint="@color/priramy"
+            style="@style/MyFloatingActionButtonStyle"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:tint="@color/white"/>
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -70,6 +69,16 @@
         app:menu="@menu/nav_menu"
         app:itemIconPadding="30dp"
         app:dividerInsetStart="@dimen/_60sdp"
-        android:layout_gravity="start"/>
+        android:layout_gravity="start">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switchMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:thumb="@drawable/thumb"
+            android:layout_marginStart="215dp"
+            android:layout_marginTop="335dp"
+            app:track="@drawable/track" />
+    </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

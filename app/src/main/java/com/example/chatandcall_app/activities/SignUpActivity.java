@@ -3,8 +3,12 @@ package com.example.chatandcall_app.activities;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.SwitchCompat;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -15,6 +19,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.chatandcall_app.R;
 import com.example.chatandcall_app.databinding.ActivitySignUpBinding;
 import com.example.chatandcall_app.utilities.Constants;
 import com.example.chatandcall_app.utilities.PreferenceManager;

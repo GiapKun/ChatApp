@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="@color/priramy"
+    style="@style/ColorToolBar"
     tools:context=".activities.UsersActivity">
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -38,8 +38,8 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        style="@style/ScreenBackground"
         android:layout_marginTop="@dimen/_16sdp"
-        android:background="@drawable/background_content_bottom"
         app:layout_constraintTop_toBottomOf="@+id/imageBack"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -53,18 +53,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/background_searchview"
+                style="@style/SearchView"
                 android:layout_margin="@dimen/_8sdp"
                 />
 
 
             <TextView
+                style="TextColor3"
                 android:id="@+id/txtSuggest"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Suggestion For You"
                 android:textSize="@dimen/_14ssp"
                 android:textStyle="bold"
-                android:textColor="@color/black"
                 android:layout_marginStart="@dimen/_14sdp"
                 android:layout_marginTop="@dimen/_20sdp"
                 android:layout_marginBottom="@dimen/_10ssp"
@@ -97,7 +98,7 @@
                 android:layout_marginStart="@dimen/_24sdp"
                 android:layout_marginEnd="@dimen/_24sdp"
                 android:gravity="center"
-                android:textColor="@color/error"
+                style="@style/ColorError"
                 android:textSize="@dimen/_12ssp"
                 android:visibility="gone" />
         </LinearLayout>
