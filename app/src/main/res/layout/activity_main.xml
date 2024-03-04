@@ -55,10 +55,9 @@
             android:layout_marginBottom="@dimen/_24sdp"
             android:contentDescription="@string/app_name"
             android:src="@drawable/ic_add"
-            app:backgroundTint="@color/priramy"
+            style="@style/MyFloatingActionButtonStyle"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:tint="@color/white"/>
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

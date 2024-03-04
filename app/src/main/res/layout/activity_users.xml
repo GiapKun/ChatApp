@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="@color/priramy"
+    style="@style/ColorToolBar"
     tools:context=".activities.UsersActivity">
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -59,13 +59,13 @@
 
 
             <TextView
+                style="TextColor3"
                 android:id="@+id/txtSuggest"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Suggestion For You"
                 android:textSize="@dimen/_14ssp"
                 android:textStyle="bold"
-                android:textColor="@color/black"
                 android:layout_marginStart="@dimen/_14sdp"
                 android:layout_marginTop="@dimen/_20sdp"
                 android:layout_marginBottom="@dimen/_10ssp"

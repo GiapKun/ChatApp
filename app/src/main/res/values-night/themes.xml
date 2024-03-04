@@ -8,7 +8,47 @@
     </style>
     <style name="CardBackground"><item name="android:backgroundTint">@color/grey</item></style>
     <style name="TextColor"><item name="android:textColor">@color/white</item></style>
-    <style name="ScreenBackground"><item name="android:background">@color/black</item></style>
+    <style name="TextColor2"><item name="android:textColor">@color/white2</item></style>
+    <style name="TextColor3"><item name="android:textColor">@color/secondary_text</item></style>
+
+    <!--    Toolbar-->
+    <style name="ColorToolBar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">@color/dark_toolbar</item>
+    </style>
+
+    <!--    FloatingButton-->
+    <style name="MyFloatingActionButtonStyle" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="backgroundTint">@color/icon_background</item>
+        <item name="tint">@color/white</item>
+    </style>
+
+    <!--    View-->
+    <style name="MyViewStyle">
+        <item name="android:background">@color/black1</item>
+    </style>
+
+    <style name="MyViewBackgroundStyle">
+        <!-- Định nghĩa background cho View -->
+        <item name="android:background">@drawable/background_content_bottom_night</item>
+    </style>
+
+    <!--    FrameLayout-->
+    <style name="MyPictureLayoutStyle">
+        <!-- Định nghĩa background cho FrameLayout -->
+        <item name="android:background">@drawable/background_chat_input_night</item>
+    </style>
+
+    <style name="MyImageViewStyle">
+        <!-- Định nghĩa tint cho AppCompatImageView -->
+        <item name="android:tint">@color/white</item>
+    </style>
+
+    <!--    Background Header-->
+    <style name="BackgroundHeader">
+        <item name="android:background">@drawable/background_header_night</item>
+    </style>
+
+    <style name="ScreenBackground"><item name="android:background">@color/black1</item></style>
     <style name="ColorError"><item name="android:textColor">@color/white</item></style>
     <style name="SearchView">
         <item name="android:strokeColor">@color/white</item>

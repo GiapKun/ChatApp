@@ -27,6 +27,7 @@
         />
 
     <TextView
+        style="@style/TextColor"
         android:id="@+id/textName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -34,7 +35,6 @@
         android:layout_marginEnd="@dimen/_8sdp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textColor="@color/priramy_text"
         android:textSize="@dimen/_13ssp"
         app:layout_constraintBottom_toTopOf="@+id/viewSupporter"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,6 +43,7 @@
     <!--    android:ellipsize="end" nếu nội dung quá dài, chữ cuối cùng sẽ được thay thế bằng dấu "..."-->
     <!--    android:maxLines="1": Giới hạn số dòng hiển thị của TextView thành 1 dòng.-->
     <TextView
+        style="@style/TextColor2"
         android:id="@+id/textRecentMessage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -50,7 +51,6 @@
         android:layout_marginEnd="@dimen/_8sdp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textColor="@color/secondary_text"
         android:textSize="@dimen/_12ssp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageProfile"

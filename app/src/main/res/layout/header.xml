@@ -6,14 +6,14 @@
     android:orientation="vertical"
     android:gravity="bottom"
     android:padding="16dp"
-    android:background="@drawable/background_header">
+    style="@style/BackgroundHeader">
 
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/imageProfile"
         android:layout_width="@dimen/_60sdp"
         android:layout_height="@dimen/_60sdp"
         android:layout_marginTop="@dimen/_12sdp"
-        android:background="@drawable/background_icon"
+        style="@style/CardBackground"
         android:scaleType="centerCrop"
         app:riv_corner_radius="@dimen/_8sdp"
         />
@@ -26,7 +26,7 @@
         android:maxLines="1"
         android:ellipsize="end"
         android:gravity="start"
-        android:textColor="@color/white"
+        style="@style/TextColor"
         android:textStyle="bold"
         android:textSize="@dimen/_26ssp"
         android:paddingTop="10dp"

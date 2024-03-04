@@ -6,9 +6,9 @@
     android:layout_height="match_parent">
 
     <Toolbar
+        style="@style/ColorToolBar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_60sdp"
-        android:background="@color/priramy"
         >
         <ImageButton
             android:id="@+id/buttonDrawerToggle"
