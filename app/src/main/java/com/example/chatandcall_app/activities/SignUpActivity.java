@@ -3,12 +3,8 @@ package com.example.chatandcall_app.activities;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.SwitchCompat;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -19,7 +15,6 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.chatandcall_app.R;
 import com.example.chatandcall_app.databinding.ActivitySignUpBinding;
 import com.example.chatandcall_app.utilities.Constants;
 import com.example.chatandcall_app.utilities.PreferenceManager;
@@ -70,13 +65,14 @@ public class SignUpActivity extends AppCompatActivity {
                 .add(user)
                 .addOnSuccessListener(documentReference -> {
                     loading(false);
-                    preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN,true);
-                    preferenceManager.putString(Constants.KEY_USER_ID,documentReference.getId());
-                    preferenceManager.putString(Constants.KEY_NAME,binding.inputName.getText().toString());
-                    preferenceManager.putString(Constants.KEY_IMAGE,encodedImage);
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                    preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN,true);
+//                    preferenceManager.putString(Constants.KEY_USER_ID,documentReference.getId());
+//                    preferenceManager.putString(Constants.KEY_NAME,binding.inputName.getText().toString());
+//                    preferenceManager.putString(Constants.KEY_IMAGE,encodedImage);
+                    Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
+                    Toast.makeText(getApplicationContext(), "Successfully", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(exception -> {
                     loading(false);
