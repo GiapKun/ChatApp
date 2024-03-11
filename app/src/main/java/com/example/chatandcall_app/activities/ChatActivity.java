@@ -112,8 +112,9 @@ public class ChatActivity extends BaseActivity {
             if (binding.inputMessage.getText().toString().isEmpty())
             {
                 showToast("Please fill in the content");
-            }
-            else {
+            } else if (binding.inputMessage.getText().toString().trim().isEmpty()) {
+                showToast("Please fill in the content");
+            } else {
                 binding.layoutSend.setOnClickListener(c -> sendMessage());
             }
         });
@@ -196,16 +197,6 @@ public class ChatActivity extends BaseActivity {
                 showToast(exception.getMessage());
             }
         }
-        binding.layoutSend.setOnClickListener(v -> {
-            if (binding.inputMessage.getText().toString().isEmpty())
-            {
-                showToast("Please fill in the content");
-            }
-            else {
-                binding.layoutSend.setOnClickListener(c -> sendMessage());
-            }
-        });
-
     }
 
     private void listenMessages(){
