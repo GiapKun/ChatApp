@@ -102,7 +102,15 @@ public class ChatActivity extends BaseActivity {
 
     private void setListeners(){
         binding.imageBack.setOnClickListener(v -> onBackPressed());
-        binding.layoutSend.setOnClickListener(v -> sendMessage());
+        binding.layoutSend.setOnClickListener(v -> {
+            if (binding.inputMessage.getText().toString().isEmpty())
+            {
+                showToast("Please fill in the content");
+            }
+            else {
+                binding.layoutSend.setOnClickListener(c -> sendMessage());
+            }
+        });
     }
 
     private void listenMessages(){
@@ -164,12 +172,12 @@ public class ChatActivity extends BaseActivity {
         HashMap<String , Object> message = new HashMap<>();
         message.put(Constants.KEY_SENDER_ID, preferecnceManager.getString(Constants.KEY_USER_ID));
         message.put(Constants.KEY_RECEIVER_ID,receiverUser.id);
-        message.put(Constants.KEY_MESSAGE,binding.inputMessage.getText().toString());
+        message.put(Constants.KEY_MESSAGE,binding.inputMessage.getText().toString().trim());
         message.put(Constants.KEY_TIMESTAMP, new Date());
         database.collection(Constants.KEY_COLLECTION_CHAT).add(message);
 
         if (conversionId != null) {
-            updateConversion(binding.inputMessage.getText().toString());
+            updateConversion(binding.inputMessage.getText().toString().trim());
         }
         else {
             HashMap<String, Object> conversion = new HashMap<>();
@@ -179,7 +187,7 @@ public class ChatActivity extends BaseActivity {
             conversion.put(Constants.KEY_RECEIVER_ID,receiverUser.id );
             conversion.put(Constants.KEY_RECEIVER_NAME,receiverUser.name );
             conversion.put(Constants.KEY_RECEIVER_IMAGE,receiverUser.image );
-            conversion.put(Constants.KEY_LAST_MESSAGE,binding.inputMessage.getText().toString() );
+            conversion.put(Constants.KEY_LAST_MESSAGE,binding.inputMessage.getText().toString().trim() );
             conversion.put(Constants.KEY_TIMESTAMP,new Date());
             addConversion(conversion);
         }
@@ -192,7 +200,7 @@ public class ChatActivity extends BaseActivity {
                 data.put(Constants.KEY_USER_ID,preferecnceManager.getString(Constants.KEY_USER_ID));
                 data.put(Constants.KEY_NAME,preferecnceManager.getString(Constants.KEY_NAME));
                 data.put(Constants.KEY_FCM_TOKEN,preferecnceManager.getString(Constants.KEY_FCM_TOKEN));
-                data.put(Constants.KEY_MESSAGE,binding.inputMessage.getText().toString());
+                data.put(Constants.KEY_MESSAGE,binding.inputMessage.getText().toString().trim());
 
                 JSONObject body = new JSONObject();
                 body.put(Constants.REMOTE_MSG_DATA, data);
