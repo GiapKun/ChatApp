@@ -57,6 +57,7 @@ dependencies {
     //Firebase
     implementation("com.google.firebase:firebase-messaging:23.4.1")
     implementation("com.google.firebase:firebase-firestore:24.10.2")
+    implementation("com.google.firebase:firebase-storage:20.3.0")
 
     //MultiDex
     implementation("androidx.multidex:multidex:2.0.1")
@@ -64,4 +65,7 @@ dependencies {
     //Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+
+    //Pisso
+    implementation("com.squareup.picasso:picasso:2.71828")
 }

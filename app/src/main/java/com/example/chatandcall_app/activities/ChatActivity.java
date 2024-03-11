@@ -1,7 +1,9 @@
 package com.example.chatandcall_app.activities;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
@@ -22,6 +24,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -36,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,6 +48,7 @@ import retrofit2.Response;
 
 public class ChatActivity extends BaseActivity {
 
+    private static final  int Pick_Image_Request = 1;
     private ActivityChatBinding binding;
     private User receiverUser;
     private List<ChatMessage> chatMessages;
@@ -103,6 +109,85 @@ public class ChatActivity extends BaseActivity {
     private void setListeners(){
         binding.imageBack.setOnClickListener(v -> onBackPressed());
         binding.layoutSend.setOnClickListener(v -> sendMessage());
+        binding.layoutPicture.setOnClickListener(v -> selectImage());
+    }
+
+
+    //Chon anh tu thiet bi
+    private void selectImage() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), Pick_Image_Request);
+    }
+
+   // Xử lý kết quả sau khi người dùng chọn hình ảnh
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == Pick_Image_Request && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri imageUri = data.getData();
+
+            // Lưu hình ảnh vào Firebase Storage
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+            String imageName = UUID.randomUUID().toString();
+            StorageReference imageRef = storageRef.child("images/" + imageName);
+            imageRef.putFile(imageUri)
+                    .addOnSuccessListener(taskSnapshot -> {
+                        // Xử lý thành công
+                       sendImage(imageName);
+                    })
+                    .addOnFailureListener(e -> {
+                        // Xử lý khi lưu hình ảnh thất bại
+                    });
+        }
+    }
+
+    private void sendImage(String url){
+        HashMap<String , Object> message = new HashMap<>();
+        message.put(Constants.KEY_SENDER_ID, preferecnceManager.getString(Constants.KEY_USER_ID));
+        message.put(Constants.KEY_RECEIVER_ID,receiverUser.id);
+        message.put(Constants.KEY_MESSAGE,url);
+        message.put(Constants.KEY_TIMESTAMP, new Date());
+        database.collection(Constants.KEY_COLLECTION_CHAT).add(message);
+
+        if (conversionId != null) {
+            updateConversion("Image....");
+        }
+        else {
+            HashMap<String, Object> conversion = new HashMap<>();
+            conversion.put(Constants.KEY_SENDER_ID, preferecnceManager.getString(Constants.KEY_USER_ID));
+            conversion.put(Constants.KEY_SENDER_NAME, preferecnceManager.getString(Constants.KEY_NAME));
+            conversion.put(Constants.KEY_SENDER_IMAGE, preferecnceManager.getString(Constants.KEY_IMAGE));
+            conversion.put(Constants.KEY_RECEIVER_ID,receiverUser.id );
+            conversion.put(Constants.KEY_RECEIVER_NAME,receiverUser.name );
+            conversion.put(Constants.KEY_RECEIVER_IMAGE,receiverUser.image );
+            conversion.put(Constants.KEY_LAST_MESSAGE,"Image....");
+            conversion.put(Constants.KEY_TIMESTAMP,new Date());
+            addConversion(conversion);
+        }
+        if (!isReceiverAvailable) {
+            try {
+                JSONArray tokens = new JSONArray();
+                tokens.put(receiverUser.token);
+
+                JSONObject data = new JSONObject();
+                data.put(Constants.KEY_USER_ID,preferecnceManager.getString(Constants.KEY_USER_ID));
+                data.put(Constants.KEY_NAME,preferecnceManager.getString(Constants.KEY_NAME));
+                data.put(Constants.KEY_FCM_TOKEN,preferecnceManager.getString(Constants.KEY_FCM_TOKEN));
+                data.put(Constants.KEY_MESSAGE,preferecnceManager.getString(Constants.KEY_NAME)+" đã gửi 1 ảnh");
+
+                JSONObject body = new JSONObject();
+                body.put(Constants.REMOTE_MSG_DATA, data);
+                body.put(Constants.REMOTE_MSG_REGISTRATION_IDS, tokens);
+
+                sendNotification(body.toString());
+            }
+            catch (Exception exception) {
+                showToast(exception.getMessage());
+            }
+        }
     }
 
     private void listenMessages(){
