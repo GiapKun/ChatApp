@@ -2,6 +2,7 @@ package com.example.chatandcall_app.adapters;
 
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.chatandcall_app.databinding.ItemContainerReceivedMessageBinding;
 import com.example.chatandcall_app.databinding.ItemContainerSentMessageBinding;
 import com.example.chatandcall_app.models.ChatMessage;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -80,17 +84,31 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
 
-    static class SentMessageViewHolder extends RecyclerView.ViewHolder{
+    static class SentMessageViewHolder extends RecyclerView.ViewHolder {
         private final ItemContainerSentMessageBinding binding;
 
-        SentMessageViewHolder(ItemContainerSentMessageBinding itemContainerSentMessageBinding){
+        SentMessageViewHolder(ItemContainerSentMessageBinding itemContainerSentMessageBinding) {
             super(itemContainerSentMessageBinding.getRoot());
             binding = itemContainerSentMessageBinding;
         }
 
-        void setData(ChatMessage chatMessage){
-            binding.textMessage.setText(chatMessage.message);
-            binding.textDateTime.setText(chatMessage.dateTime);
+        void setData(ChatMessage chatMessage) {
+            String imageName = chatMessage.message;
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+            StorageReference imageRef = storageRef.child("images/" + imageName);
+
+            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                // Hình ảnh tồn tại trong bộ lưu trữ Storage
+                binding.textMessage.setVisibility(View.GONE);
+                Picasso.get().load(uri).into(binding.image);
+                binding.textDateTime.setText(chatMessage.dateTime);
+            }).addOnFailureListener(exception -> {
+                // Hình ảnh không tồn tại trong bộ lưu trữ Storage
+                binding.textMessage.setText(chatMessage.message);
+                binding.textDateTime.setText(chatMessage.dateTime);
+                binding.image.setVisibility(View.GONE);
+            });
+
         }
     }
 
@@ -102,11 +120,23 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             binding = itemContainerRecievedMessageBinding;
         }
         void setData(ChatMessage chatMessage, Bitmap receiverProfileImage){
-            binding.textMessage.setText(chatMessage.message);
             binding.textDateTime.setText(chatMessage.dateTime);
             if (receiverProfileImage != null){
                 binding.imageProfile.setImageBitmap(receiverProfileImage);
             }
+            String imageName = chatMessage.message;
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+            StorageReference imageRef = storageRef.child("images/" + imageName);
+
+            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                // Hình ảnh tồn tại trong bộ lưu trữ Storage
+                binding.textMessage.setVisibility(View.GONE);
+                Picasso.get().load(uri).into(binding.image);
+            }).addOnFailureListener(exception -> {
+                // Hình ảnh không tồn tại trong bộ lưu trữ Storage
+                binding.image.setVisibility(View.GONE);
+                binding.textMessage.setText(chatMessage.message);
+            });
         }
 
     }
