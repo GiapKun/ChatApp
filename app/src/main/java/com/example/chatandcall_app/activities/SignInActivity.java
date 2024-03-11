@@ -17,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SignInActivity extends AppCompatActivity {
 
+
     private ActivitySignInBinding binding;
     private PreferenceManager preferecnceManager;
     @Override
@@ -25,6 +26,7 @@ public class SignInActivity extends AppCompatActivity {
         binding= ActivitySignInBinding.inflate(getLayoutInflater());
         setContentView(R.layout.activity_sign_in);
         setContentView(binding.getRoot());
+
         preferecnceManager = new PreferenceManager(getApplicationContext());
         //Auto SignIn
         if(preferecnceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)){
