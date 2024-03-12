@@ -20,5 +20,6 @@
     <color name="lavender">#5C65DD</color>
     <color name="color_edittext">#14000000</color>
     <color name="white2">#F5F5F5</color>
+    <color name="white3">#D7D6D2D2</color>
     <color name="dark_toolbar">#43000000</color>
 </resources>

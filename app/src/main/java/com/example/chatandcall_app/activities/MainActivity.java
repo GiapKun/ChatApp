@@ -103,9 +103,16 @@ public class MainActivity extends BaseActivity implements ConversionListener {
                     showToast("This Information");
 
                 }
-                if (itemId == R.id.nav_setting){
-                    showToast("This Setting");
+                if(itemId == R.id.nav_setting)
+                {
+                    Toast.makeText(MainActivity.this, "This Setting", Toast.LENGTH_SHORT).show();
                 }
+                if (itemId == R.id.nav_setting){
+                    Intent intent = new Intent(MainActivity.this, ChangePasswordActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+
                 if (itemId == R.id.nav_signOut){
                     signOut();
                 }

@@ -12,6 +12,7 @@
     <style name="TextColor"><item name="android:textColor">@color/priramy_text</item></style>
     <style name="TextColor2"><item name="android:textColor">@color/secondary_text</item></style>
     <style name="TextColor3"><item name="android:textColor">@color/black</item></style>
+    <style name="TextColor4"><item name="android:textColor">@color/black1</item></style>
 <!--    Toolbar-->
     <style name="ColorToolBar" parent="Widget.AppCompat.Toolbar">
         <item name="android:background">@color/priramy</item>
@@ -44,6 +45,14 @@
 <!--    Background Header-->
     <style name="BackgroundHeader">
         <item name="android:background">@drawable/background_header</item>
+    </style>
+
+    <style name="ChangePassword">
+        <item name="android:background">@color/white3</item>
+    </style>
+
+    <style name="itemBack">
+        <item name="android:src">@drawable/ic_back</item>
     </style>
 
 
