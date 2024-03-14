@@ -51,7 +51,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 String userPwdCurr = currentPassword.getText().toString();
                 String newPwd = newPassword.getText().toString();
                 String confirmPwd = confirmPassword.getText().toString();
-                @Override
+               @Override
                 public void onClick(View v) {
                     if (newPwd.length() > 0)
                     {
