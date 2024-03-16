@@ -33,6 +33,11 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    packagingOptions{
+        exclude("META-INF/NOTICE.md")
+        exclude("META-INF/LICENSE.md")
+    }
 }
 
 dependencies {
@@ -69,4 +74,8 @@ dependencies {
 
     //Pisso
     implementation("com.squareup.picasso:picasso:2.71828")
+
+    // SMTP
+    implementation("com.sun.mail:android-mail:1.6.6")
+    implementation("com.sun.mail:android-activation:1.6.7")
 }

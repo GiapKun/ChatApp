@@ -3,6 +3,9 @@ package com.example.chatandcall_app.utilities;
 import java.util.HashMap;
 
 public class Constants {
+    public static final String Sender_Email_Address ="pettertran1121@gmail.com";
+    public static final String Sender_Email_Password ="osrz ukpf adry gxpg";
+    public static final String Gmail_Host ="smtp.gmail.com";
     public static final String KEY_COLLECTION_USERS ="users";
     public static final String KEY_NAME ="name";
     public static final String KEY_EMAIL ="gmail";

@@ -99,14 +99,14 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                 // Hình ảnh tồn tại trong bộ lưu trữ Storage
-                binding.textMessage.setVisibility(View.GONE);
                 Picasso.get().load(uri).into(binding.image);
+                binding.image.setVisibility(View.VISIBLE);
                 binding.textDateTime.setText(chatMessage.dateTime);
             }).addOnFailureListener(exception -> {
                 // Hình ảnh không tồn tại trong bộ lưu trữ Storage
                 binding.textMessage.setText(chatMessage.message);
+                binding.textMessage.setVisibility(View.VISIBLE);
                 binding.textDateTime.setText(chatMessage.dateTime);
-                binding.image.setVisibility(View.GONE);
             });
 
         }
@@ -130,12 +130,12 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                 // Hình ảnh tồn tại trong bộ lưu trữ Storage
-                binding.textMessage.setVisibility(View.GONE);
                 Picasso.get().load(uri).into(binding.image);
+                binding.image.setVisibility(View.VISIBLE);
             }).addOnFailureListener(exception -> {
                 // Hình ảnh không tồn tại trong bộ lưu trữ Storage
-                binding.image.setVisibility(View.GONE);
                 binding.textMessage.setText(chatMessage.message);
+                binding.textMessage.setVisibility(View.VISIBLE);
             });
         }
 

@@ -33,6 +33,7 @@
         app:layout_constraintStart_toEndOf="@id/imageProfile"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.75"
+        android:visibility="gone"
         />
 
     <ImageView
@@ -50,6 +51,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textMessage"
         app:layout_constraintStart_toEndOf="@id/imageProfile"
         app:layout_constraintWidth_percent="0.8"
+        android:visibility="gone"
         />
 
     <TextView
