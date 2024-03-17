@@ -1,5 +1,6 @@
 package com.example.chatandcall_app.activities;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,6 +27,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.permissionx.guolindev.PermissionX;
+import com.permissionx.guolindev.callback.ExplainReasonCallback;
+import com.permissionx.guolindev.callback.RequestCallback;
+import com.permissionx.guolindev.databinding.PermissionxDefaultDialogLayoutBinding;
+import com.permissionx.guolindev.request.ExplainScope;
+import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 
 
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -33,8 +40,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.Permission;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -68,6 +77,22 @@ public class ChatActivity extends BaseActivity {
         loadReceiverDetails();
         init();
         listenMessages();
+        // Đặt mã yêu cầu quyền SYSTEM_ALERT_WINDOW
+        PermissionX.init(this)
+                .permissions(Manifest.permission.SYSTEM_ALERT_WINDOW)
+                .onExplainRequestReason(new ExplainReasonCallback() {
+                    @Override
+                    public void onExplainReason(@NonNull ExplainScope scope, @NonNull List<String> deniedList) {
+                        String message = "We need your consent for the following permissions in order to use the offline call function properly";
+                        scope.showRequestReasonDialog(deniedList, message, "Allow", "Deny");
+                    }
+                }).request(new RequestCallback() {
+                    @Override
+                    public void onResult(boolean allGranted, @NonNull List<String> grantedList,
+                                         @NonNull List<String> deniedList) {
+                        // Xử lý kết quả của yêu cầu quyền ở đây
+                    }
+                });
     }
 
     private void init(){
@@ -99,8 +124,21 @@ public class ChatActivity extends BaseActivity {
     private void loadReceiverDetails(){
         receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
         binding.textName.setText(receiverUser.name);
+        setVoiceCall(receiverUser.id,receiverUser.name);
+        setVideoCall(receiverUser.id,receiverUser.name);
     }
 
+    private void setVoiceCall(String targetUserID,String targetUserName){
+        binding.imageCall.setIsVideoCall(false);
+        binding.imageCall.setResourceID("zego_uikit_call"); // Please fill in the resource ID name that has been configured in the ZEGOCLOUD's console here.
+        binding.imageCall.setInvitees(Collections.singletonList(new ZegoUIKitUser(targetUserID,targetUserName)));
+    }
+
+    private void setVideoCall(String targetUserID,String targetUserName){
+        binding.imageVideoCall.setIsVideoCall(true);
+        binding.imageVideoCall.setResourceID("zego_uikit_call"); // Please fill in the resource ID name that has been configured in the ZEGOCLOUD's console here.
+        binding.imageVideoCall.setInvitees(Collections.singletonList(new ZegoUIKitUser(targetUserID,targetUserName)));
+    }
 
     private String getReadableDateTime(Date date)   {
         return new SimpleDateFormat("MMMM dd, yyyy - hh:mm a", Locale.getDefault()).format(date);

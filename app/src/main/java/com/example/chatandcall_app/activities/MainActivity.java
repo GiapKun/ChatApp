@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SwitchCompat;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,6 +35,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig;
+import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -81,6 +84,7 @@ public class MainActivity extends BaseActivity implements ConversionListener {
         conversationsAdapter = new RecentConversationsAdapter(conversations, this);
         binding.conversationsRecyclerView.setAdapter(conversationsAdapter);
         database = FirebaseFirestore.getInstance();
+        startService(preferecnceManager.getString(Constants.KEY_USER_ID),preferecnceManager.getString(Constants.KEY_NAME));
     }
 
     private  void setListeners() {
@@ -184,6 +188,24 @@ public class MainActivity extends BaseActivity implements ConversionListener {
                     finish();
                 })
                 .addOnFailureListener(e -> showToast("Unable to sign out"));
+    }
+    
+    //Call
+    private void startService(String senderID,String senderName) {
+        Application application = getApplication(); // Android's application context
+        long appID = 968668767;   // yourAppID
+        String appSign ="7f143ce516bbacf0ffa0c8cf65e552a0cde048208836623acf0ad2f66cf6bcb4";  // yourAppSign
+//        String userName = userID; // yourUserID, userID should only contain numbers, English characters, and '_'.
+        String userID = senderID; // yourUserID, userID should only contain numbers, English characters, and '_'.
+        String userName = senderName;   // yourUserName
+
+        ZegoUIKitPrebuiltCallInvitationConfig callInvitationConfig = new ZegoUIKitPrebuiltCallInvitationConfig();
+        ZegoUIKitPrebuiltCallInvitationService.init(getApplication(), appID, appSign, userID, userName,callInvitationConfig);
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ZegoUIKitPrebuiltCallInvitationService.unInit();
     }
 
 
