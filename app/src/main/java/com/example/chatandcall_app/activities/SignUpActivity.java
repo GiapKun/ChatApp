@@ -46,6 +46,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private ActivitySignUpBinding binding;
     private PreferenceManager preferenceManager;
+    private FirebaseFirestore database;
     private  String encodedImage;
     private int  otp ;
     @Override
@@ -59,12 +60,27 @@ public class SignUpActivity extends AppCompatActivity {
     private void setListeners(){
         binding.textSignIn.setOnClickListener(v -> onBackPressed());
         binding.buttonSignUp.setOnClickListener(v -> {
-            if (isValidSignUpDetails()){
+//            if (isValidSignUpDetails()){
                 String receiverEmail = binding.inputEmail.getText().toString().trim();
-                otp = (int) (Math.random() * 900000) + 100000;
-                sendEmail(otp,receiverEmail);
-                showDialog();
-            }
+                checkAvailable(receiverEmail, new OnCheckAvailableListener() {
+                    @Override
+                    public void onCheckAvailable(boolean isAvailable) {
+                        // Ở đây bạn có thể xử lý kết quả, ví dụ:
+                        if (isAvailable) {
+                            // Email đã tồn tại
+                            init();
+                            showToast("Email already exists. Please try another email!");
+                        } else {
+                            // Email chưa tồn tại
+//                            showToast("Email doesn't exist");
+                            otp = (int) (Math.random() * 900000) + 100000;
+                            sendEmail(otp,receiverEmail);
+                            showDialog();
+                            signUp();
+                        }
+                    }
+                });
+//            }
         });
         //Select img
         binding.layoutImage.setOnClickListener(v -> {
@@ -73,6 +89,27 @@ public class SignUpActivity extends AppCompatActivity {
             pickImage.launch(intent);
         });
     }
+
+    private void checkAvailable(String email, OnCheckAvailableListener listener) {
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        firestore.collection(Constants.KEY_COLLECTION_USERS)
+                .whereEqualTo(Constants.KEY_EMAIL, email)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        boolean isExisted = !task.getResult().isEmpty();
+                        listener.onCheckAvailable(isExisted);
+                    } else {
+                        listener.onCheckAvailable(false);
+                    }
+                });
+    }
+
+    // Định nghĩa một interface để sử dụng callback
+    interface OnCheckAvailableListener {
+        void onCheckAvailable(boolean isAvailable);
+    }
+
 
     private void showDialog(){
         // Create new Dialog

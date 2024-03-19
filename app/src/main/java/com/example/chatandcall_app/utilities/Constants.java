@@ -3,6 +3,7 @@ package com.example.chatandcall_app.utilities;
 import java.util.HashMap;
 
 public class Constants {
+    public static final String ChatGPT_ID = "WNjBJEEy6TnsGcqpnHXP";
     public static final String Sender_Email_Address ="pettertran1121@gmail.com";
     public static final String Sender_Email_Password ="osrz ukpf adry gxpg";
     public static final String Gmail_Host ="smtp.gmail.com";
