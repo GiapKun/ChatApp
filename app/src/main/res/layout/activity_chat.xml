@@ -40,19 +40,52 @@
         app:tint="@color/white"
         />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imageInfo"
-        android:layout_width="@dimen/_30sdp"
-        android:layout_height="@dimen/_30sdp"
-        android:layout_marginEnd="@dimen/_16sdp"
-        android:layout_marginRight="@dimen/_16sdp"
-        android:layout_marginTop="@dimen/_12sdp"
-        android:padding="@dimen/_4sdp"
-        android:src="@drawable/ic_info"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/white"
+<!--    <androidx.appcompat.widget.AppCompatImageView-->
+<!--        android:id="@+id/imageCall"-->
+<!--        android:layout_width="@dimen/_30sdp"-->
+<!--        android:layout_height="@dimen/_30sdp"-->
+<!--        android:layout_marginEnd="@dimen/_4sdp"-->
+<!--        android:layout_marginTop="@dimen/_12sdp"-->
+<!--        android:padding="@dimen/_4sdp"-->
+<!--        android:src="@drawable/ic_call"-->
+<!--        app:layout_constraintEnd_toStartOf="@id/imageVideoCall"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:tint="@color/white"-->
+<!--        />-->
+
+<!--    <androidx.appcompat.widget.AppCompatImageView-->
+<!--        android:id="@+id/imageVideoCall"-->
+<!--        android:layout_width="@dimen/_30sdp"-->
+<!--        android:layout_height="@dimen/_30sdp"-->
+<!--        android:layout_marginEnd="@dimen/_2sdp"-->
+<!--        android:layout_marginTop="@dimen/_12sdp"-->
+<!--        android:padding="@dimen/_4sdp"-->
+<!--        android:src="@drawable/ic_info"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:tint="@color/white"-->
+<!--        />-->
+        <com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton
+            android:id="@+id/imageCall"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:padding="@dimen/_4sdp"
+            app:layout_constraintEnd_toStartOf="@id/imageVideoCall"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+    <com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton
+            android:id="@+id/imageVideoCall"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginEnd="@dimen/_2sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:padding="@dimen/_4sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
         />
+
 
     <TextView
         android:id="@+id/textName"
@@ -67,9 +100,9 @@
         android:textStyle="bold"
         android:textSize="@dimen/_14ssp"
         app:layout_constraintBottom_toBottomOf="@+id/imageBack"
-        app:layout_constraintEnd_toStartOf="@id/imageInfo"
-        app:layout_constraintTop_toTopOf="@+id/imageBack"
+        app:layout_constraintEnd_toStartOf="@id/imageCall"
         app:layout_constraintStart_toEndOf="@id/imageBack"
+        app:layout_constraintTop_toTopOf="@+id/imageBack"
         />
 
     <View
