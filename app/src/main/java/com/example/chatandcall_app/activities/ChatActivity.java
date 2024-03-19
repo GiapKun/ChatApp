@@ -30,7 +30,6 @@ import com.google.firebase.storage.StorageReference;
 import com.permissionx.guolindev.PermissionX;
 import com.permissionx.guolindev.callback.ExplainReasonCallback;
 import com.permissionx.guolindev.callback.RequestCallback;
-import com.permissionx.guolindev.databinding.PermissionxDefaultDialogLayoutBinding;
 import com.permissionx.guolindev.request.ExplainScope;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 
@@ -40,6 +39,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.security.Permission;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,7 +50,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -66,6 +71,11 @@ public class ChatActivity extends BaseActivity {
     private FirebaseFirestore database;
     private String conversionId = null;
     private Boolean isReceiverAvailable = false;
+    public static final MediaType JSON
+            = MediaType.get("application/json; charset=utf-8");
+    OkHttpClient client = new OkHttpClient.Builder()
+            .readTimeout(60, TimeUnit.SECONDS)
+            .build();
 
 
     @Override
@@ -124,8 +134,13 @@ public class ChatActivity extends BaseActivity {
     private void loadReceiverDetails(){
         receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
         binding.textName.setText(receiverUser.name);
-        setVoiceCall(receiverUser.id,receiverUser.name);
-        setVideoCall(receiverUser.id,receiverUser.name);
+        if (receiverUser.id.equals(Constants.ChatGPT_ID)){
+            binding.layoutPicture.setVisibility(View.GONE);
+        }
+        else {
+            setVoiceCall(receiverUser.id,receiverUser.name);
+            setVideoCall(receiverUser.id,receiverUser.name);
+        }
     }
 
     private void setVoiceCall(String targetUserID,String targetUserName){
@@ -153,7 +168,16 @@ public class ChatActivity extends BaseActivity {
             } else if (binding.inputMessage.getText().toString().trim().isEmpty()) {
                 showToast("Please fill in the content");
             } else {
-                binding.layoutSend.setOnClickListener(c -> sendMessage());
+                if (!preferecnceManager.getString(Constants.KEY_USER_ID).equals(Constants.ChatGPT_ID) && receiverUser.id.equals(Constants.ChatGPT_ID)) {
+                    binding.layoutSend.setOnClickListener(c -> {
+                        String question =binding.inputMessage.getText().toString();
+                        GPTRequest(question);
+                        callApiInBackground(question);
+                    });
+                }
+                else {
+                    binding.layoutSend.setOnClickListener(c -> sendMessage());
+                }
             }
         });
         binding.layoutPicture.setOnClickListener(v -> selectImage());
@@ -188,6 +212,149 @@ public class ChatActivity extends BaseActivity {
                     .addOnFailureListener(e -> {
                         // Xử lý khi lưu hình ảnh thất bại
                     });
+        }
+    }
+
+    private void callApiInBackground(final String message) {
+        // Tao new luong de thuc thi API
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                callAPI(message);
+            }
+        });
+        thread.start();
+    }
+    // GPT
+    private void  callAPI(String question){
+        JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("model","gpt-3.5-turbo");
+            JSONArray messageArr = new JSONArray();
+            JSONObject obj = new JSONObject();
+            obj.put("role","user");
+            obj.put("content",question);
+            messageArr.put(obj);
+
+            jsonBody.put("messages",messageArr);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        RequestBody body = RequestBody.create(jsonBody.toString(),JSON);
+        Request request = new Request.Builder()
+                .url("\n" +
+                        "https://api.openai.com/v1/chat/completions")
+                .header("Authorization","Bearer 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")
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(@androidx.annotation.NonNull okhttp3.Call call, @androidx.annotation.NonNull IOException e) {
+                GPTResponse("So sorry! I am busy. Try again in a few minutes ");
+            }
+
+            @Override
+            public void onResponse(@androidx.annotation.NonNull okhttp3.Call call, @androidx.annotation.NonNull okhttp3.Response response) throws IOException {
+                if(response.isSuccessful()){
+                    JSONObject  jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(response.body().string());
+                        JSONArray jsonArray = jsonObject.getJSONArray("choices");
+                        String result = jsonArray.getJSONObject(0)
+                                .getJSONObject("message")
+                                .getString("content");
+
+                        GPTResponse(result.trim());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+//                    else if (response.code() == 429) {
+//                        // Handle 429 error
+//                        Log.d("test", "Error 429: Too Many Requests. Retrying...");
+//                        // Implement retry logic here (delay and retry)
+//                    }
+                else {
+                    GPTResponse("Failed to load response due to "+response.body().string());
+                }
+            }
+        });
+
+    }
+
+    private void GPTRequest(String question){
+        HashMap<String , Object> message = new HashMap<>();
+        message.put(Constants.KEY_SENDER_ID, preferecnceManager.getString(Constants.KEY_USER_ID));
+        message.put(Constants.KEY_RECEIVER_ID,Constants.ChatGPT_ID.trim());
+        message.put(Constants.KEY_MESSAGE,question.trim());
+        message.put(Constants.KEY_TIMESTAMP, new Date());
+        database.collection(Constants.KEY_COLLECTION_CHAT).add(message);
+
+        if (conversionId != null) {
+            updateConversion(binding.inputMessage.getText().toString().trim());
+        }
+        else {
+            HashMap<String, Object> conversion = new HashMap<>();
+            conversion.put(Constants.KEY_SENDER_ID, preferecnceManager.getString(Constants.KEY_USER_ID));
+            conversion.put(Constants.KEY_SENDER_NAME, preferecnceManager.getString(Constants.KEY_NAME));
+            conversion.put(Constants.KEY_SENDER_IMAGE, preferecnceManager.getString(Constants.KEY_IMAGE));
+            conversion.put(Constants.KEY_RECEIVER_ID,receiverUser.id );
+            conversion.put(Constants.KEY_RECEIVER_NAME,receiverUser.name );
+            conversion.put(Constants.KEY_RECEIVER_IMAGE,receiverUser.image );
+            conversion.put(Constants.KEY_LAST_MESSAGE,binding.inputMessage.getText().toString().trim() );
+            conversion.put(Constants.KEY_TIMESTAMP,new Date());
+            addConversion(conversion);
+        }
+        binding.inputMessage.setText(null);
+    }
+
+    private void GPTResponse(String response){
+        HashMap<String , Object> message = new HashMap<>();
+        message.put(Constants.KEY_SENDER_ID,Constants.ChatGPT_ID.trim());//GPT
+        message.put(Constants.KEY_RECEIVER_ID,preferecnceManager.getString(Constants.KEY_USER_ID)); //nguoi da request
+        message.put(Constants.KEY_MESSAGE,response);//result from API
+        message.put(Constants.KEY_TIMESTAMP, new Date());
+        database.collection(Constants.KEY_COLLECTION_CHAT).add(message);
+
+        if (conversionId != null) {
+            updateConversion(binding.inputMessage.getText().toString().trim());
+        }
+        else {
+            HashMap<String, Object> conversion = new HashMap<>();
+            conversion.put(Constants.KEY_SENDER_ID, preferecnceManager.getString(Constants.KEY_USER_ID));
+            conversion.put(Constants.KEY_SENDER_NAME, preferecnceManager.getString(Constants.KEY_NAME));
+            conversion.put(Constants.KEY_SENDER_IMAGE, preferecnceManager.getString(Constants.KEY_IMAGE));
+            conversion.put(Constants.KEY_RECEIVER_ID,receiverUser.id );
+            conversion.put(Constants.KEY_RECEIVER_NAME,receiverUser.name );
+            conversion.put(Constants.KEY_RECEIVER_IMAGE,receiverUser.image );
+            conversion.put(Constants.KEY_LAST_MESSAGE,"Result is .....");
+            conversion.put(Constants.KEY_TIMESTAMP,new Date());
+            addConversion(conversion);
+        }
+
+        if (!isReceiverAvailable) {
+            try {
+                JSONArray tokens = new JSONArray();
+                tokens.put(receiverUser.token);
+
+                JSONObject data = new JSONObject();
+                data.put(Constants.KEY_USER_ID,preferecnceManager.getString(Constants.KEY_USER_ID));
+                data.put(Constants.KEY_NAME,preferecnceManager.getString(Constants.KEY_NAME));
+                data.put(Constants.KEY_FCM_TOKEN,preferecnceManager.getString(Constants.KEY_FCM_TOKEN));
+                data.put(Constants.KEY_MESSAGE,"Result is .....");
+
+                JSONObject body = new JSONObject();
+                body.put(Constants.REMOTE_MSG_DATA, data);
+                body.put(Constants.REMOTE_MSG_REGISTRATION_IDS, tokens);
+
+                sendNotification(body.toString());
+            }
+            catch (Exception exception) {
+                showToast(exception.getMessage());
+            }
         }
     }
 
