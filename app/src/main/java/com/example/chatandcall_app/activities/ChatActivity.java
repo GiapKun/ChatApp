@@ -335,27 +335,6 @@ public class ChatActivity extends BaseActivity {
             addConversion(conversion);
         }
 
-        if (!isReceiverAvailable) {
-            try {
-                JSONArray tokens = new JSONArray();
-                tokens.put(receiverUser.token);
-
-                JSONObject data = new JSONObject();
-                data.put(Constants.KEY_USER_ID,preferecnceManager.getString(Constants.KEY_USER_ID));
-                data.put(Constants.KEY_NAME,preferecnceManager.getString(Constants.KEY_NAME));
-                data.put(Constants.KEY_FCM_TOKEN,preferecnceManager.getString(Constants.KEY_FCM_TOKEN));
-                data.put(Constants.KEY_MESSAGE,"Result is .....");
-
-                JSONObject body = new JSONObject();
-                body.put(Constants.REMOTE_MSG_DATA, data);
-                body.put(Constants.REMOTE_MSG_REGISTRATION_IDS, tokens);
-
-                sendNotification(body.toString());
-            }
-            catch (Exception exception) {
-                showToast(exception.getMessage());
-            }
-        }
     }
 
     private void sendImage(String url){
