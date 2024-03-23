@@ -127,10 +127,15 @@ public class ChatActivity extends BaseActivity {
         }
     }
 
+    private String getReadableDateTime(Date date)   {
+        return new SimpleDateFormat("MMMM dd, yyyy - hh:mm a", Locale.getDefault()).format(date);
+    }
+
     private  void showToast(String message){
         Toast.makeText(getApplicationContext(), message,Toast.LENGTH_SHORT).show();
     }
 
+    //Lấy thông tin ng nhận từ intent và setup video call
     private void loadReceiverDetails(){
         receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
         binding.textName.setText(receiverUser.name);
@@ -143,6 +148,30 @@ public class ChatActivity extends BaseActivity {
         }
     }
 
+
+    // Các sự kiện click
+    private void setListeners(){
+        binding.imageBack.setOnClickListener(v -> onBackPressed());
+        binding.layoutSend.setOnClickListener(v -> {
+            if (binding.inputMessage.getText().toString().isEmpty())
+            {
+                showToast("Please fill in the content");
+            }
+            else {
+                if (!preferecnceManager.getString(Constants.KEY_USER_ID).equals(Constants.ChatGPT_ID) && receiverUser.id.equals(Constants.ChatGPT_ID)) {
+                        String question =binding.inputMessage.getText().toString();
+                        GPTRequest(question);
+                        callApiInBackground(question);
+                }
+                else {
+                        sendMessage();
+                }
+            }
+        });
+        binding.layoutPicture.setOnClickListener(v -> selectImage());
+    }
+
+    // Call video
     private void setVoiceCall(String targetUserID,String targetUserName){
         binding.imageCall.setIsVideoCall(false);
         binding.imageCall.setResourceID("zego_uikit_call"); // Please fill in the resource ID name that has been configured in the ZEGOCLOUD's console here.
@@ -155,66 +184,8 @@ public class ChatActivity extends BaseActivity {
         binding.imageVideoCall.setInvitees(Collections.singletonList(new ZegoUIKitUser(targetUserID,targetUserName)));
     }
 
-    private String getReadableDateTime(Date date)   {
-        return new SimpleDateFormat("MMMM dd, yyyy - hh:mm a", Locale.getDefault()).format(date);
-    }
 
-    private void setListeners(){
-        binding.imageBack.setOnClickListener(v -> onBackPressed());
-        binding.layoutSend.setOnClickListener(v -> {
-            if (binding.inputMessage.getText().toString().isEmpty())
-            {
-                showToast("Please fill in the content");
-            } else if (binding.inputMessage.getText().toString().trim().isEmpty()) {
-                showToast("Please fill in the content");
-            } else {
-                if (!preferecnceManager.getString(Constants.KEY_USER_ID).equals(Constants.ChatGPT_ID) && receiverUser.id.equals(Constants.ChatGPT_ID)) {
-                    binding.layoutSend.setOnClickListener(c -> {
-                        String question =binding.inputMessage.getText().toString();
-                        GPTRequest(question);
-                        callApiInBackground(question);
-                    });
-                }
-                else {
-                    binding.layoutSend.setOnClickListener(c -> sendMessage());
-                }
-            }
-        });
-        binding.layoutPicture.setOnClickListener(v -> selectImage());
-    }
-
-
-    //Chon anh tu thiet bi
-    private void selectImage() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), Pick_Image_Request);
-    }
-
-   // Xử lý kết quả sau khi người dùng chọn hình ảnh
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == Pick_Image_Request && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            Uri imageUri = data.getData();
-
-            // Lưu hình ảnh vào Firebase Storage
-            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-            String imageName = UUID.randomUUID().toString();
-            StorageReference imageRef = storageRef.child("images/" + imageName);
-            imageRef.putFile(imageUri)
-                    .addOnSuccessListener(taskSnapshot -> {
-                        // Xử lý thành công
-                       sendImage(imageName);
-                    })
-                    .addOnFailureListener(e -> {
-                        // Xử lý khi lưu hình ảnh thất bại
-                    });
-        }
-    }
-
+    // Tương tác với CHAT GPT
     private void callApiInBackground(final String message) {
         // Tao new luong de thuc thi API
         Thread thread = new Thread(new Runnable() {
@@ -337,6 +308,9 @@ public class ChatActivity extends BaseActivity {
 
     }
 
+
+
+    //Gửi ảnh
     private void sendImage(String url){
         HashMap<String , Object> message = new HashMap<>();
         message.put(Constants.KEY_SENDER_ID, preferecnceManager.getString(Constants.KEY_USER_ID));
@@ -383,6 +357,39 @@ public class ChatActivity extends BaseActivity {
         }
     }
 
+    //Chon anh tu thiet bi
+    private void selectImage() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), Pick_Image_Request);
+    }
+
+    // Xử lý kết quả sau khi người dùng chọn hình ảnh
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == Pick_Image_Request && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri imageUri = data.getData();
+
+            // Lưu hình ảnh vào Firebase Storage
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+            String imageName = UUID.randomUUID().toString();
+            StorageReference imageRef = storageRef.child("images/" + imageName);
+            imageRef.putFile(imageUri)
+                    .addOnSuccessListener(taskSnapshot -> {
+                        // Xử lý thành công
+                        sendImage(imageName);
+                    })
+                    .addOnFailureListener(e -> {
+                        // Xử lý khi lưu hình ảnh thất bại
+                    });
+        }
+    }
+
+
+
     private void listenMessages(){
         database.collection(Constants.KEY_COLLECTION_CHAT)
                 .whereEqualTo(Constants.KEY_SENDER_ID, preferecnceManager.getString(Constants.KEY_USER_ID))
@@ -424,12 +431,15 @@ public class ChatActivity extends BaseActivity {
     };
 
 
+    // Tạo một cuộc trò chuyện mới khi chưa có
     private void addConversion( HashMap<String, Object> conversion) {
         database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
                 .add(conversion)
                 .addOnSuccessListener(documentReference -> conversionId = documentReference.getId());
     }
 
+
+    // Update tin nhắn cuối cùng cho cuộc trò chuyện
     private void updateConversion(String message) {
         DocumentReference documentReference =
                 database.collection(Constants.KEY_COLLECTION_CONVERSATIONS).document(conversionId);
@@ -438,6 +448,7 @@ public class ChatActivity extends BaseActivity {
         );
     }
 
+    // Gửi tin nhắn
     private void sendMessage(){
         HashMap<String , Object> message = new HashMap<>();
         message.put(Constants.KEY_SENDER_ID, preferecnceManager.getString(Constants.KEY_USER_ID));
@@ -485,33 +496,9 @@ public class ChatActivity extends BaseActivity {
         binding.inputMessage.setText(null);
     }
 
-    private void listenAvailabilityOfReceiver() {
-        database.collection(Constants.KEY_COLLECTION_USERS).document(receiverUser.id)
-                .addSnapshotListener(ChatActivity.this, (value, error) -> {
-                    if (error != null ) {
-                        return;
-                    }
-                    if (value != null ){
-                        if( value.getLong(Constants.KEY_AVAILABILITY) != null){
-                            int availability = Objects.requireNonNull(value.getLong(Constants.KEY_AVAILABILITY).intValue());
-                            isReceiverAvailable = availability == 1;
-                        }
-                        receiverUser.token = value.getString(Constants.KEY_FCM_TOKEN);
-                        if (receiverUser.image == null){
-                            receiverUser.image = value.getString(Constants.KEY_IMAGE);
-                            chatAdapter.setReceiverProfileImage(getBitmapFromEncodedString(receiverUser.image));
-                            chatAdapter.notifyItemRangeChanged(0, chatMessages.size());
-                        }
-                    }
-                    if (isReceiverAvailable){
-                        binding.textAvailability.setVisibility(View.VISIBLE);
-                    }
-                    else{
-                        binding.textAvailability.setVisibility(View.GONE);
-                    }
-                });
-    }
 
+
+    // Sự kiên xem có sự thay đổi gì ở danh sách tin nhắn không, tức là có tin nhắn nào mới không
     private final EventListener<QuerySnapshot> eventListener = (value, error) -> {
         if (error != null){
             return;
@@ -545,6 +532,10 @@ public class ChatActivity extends BaseActivity {
         }
     };
 
+
+
+
+    // Gửi thông báo
     private void sendNotification(String messageBody) {
         ApiClient.getClient().create(ApiService.class).sendMessage(
                 Constants.getRemoteMsgHeaders(),
@@ -580,9 +571,40 @@ public class ChatActivity extends BaseActivity {
         });
     }
 
+
+
+
+    // trang thái hoạt động
     @Override
     protected void onResume() {
         super.onResume();
         listenAvailabilityOfReceiver();
     }
+    private void listenAvailabilityOfReceiver() {
+        database.collection(Constants.KEY_COLLECTION_USERS).document(receiverUser.id)
+                .addSnapshotListener(ChatActivity.this, (value, error) -> {
+                    if (error != null ) {
+                        return;
+                    }
+                    if (value != null ){
+                        if( value.getLong(Constants.KEY_AVAILABILITY) != null){
+                            int availability = Objects.requireNonNull(value.getLong(Constants.KEY_AVAILABILITY).intValue());
+                            isReceiverAvailable = availability == 1;
+                        }
+                        receiverUser.token = value.getString(Constants.KEY_FCM_TOKEN);
+                        if (receiverUser.image == null){
+                            receiverUser.image = value.getString(Constants.KEY_IMAGE);
+                            chatAdapter.setReceiverProfileImage(getBitmapFromEncodedString(receiverUser.image));
+                            chatAdapter.notifyItemRangeChanged(0, chatMessages.size());
+                        }
+                    }
+                    if (isReceiverAvailable){
+                        binding.textAvailability.setVisibility(View.VISIBLE);
+                    }
+                    else{
+                        binding.textAvailability.setVisibility(View.GONE);
+                    }
+                });
+    }
+
 }
