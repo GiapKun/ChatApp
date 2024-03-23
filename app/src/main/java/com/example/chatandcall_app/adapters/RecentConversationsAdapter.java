@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -70,6 +71,37 @@ public class RecentConversationsAdapter extends RecyclerView.Adapter<RecentConve
                 user.image = chatMessage.conversionImage;
                 conversionListener.onConversionClicked(user);
             });
+
+//            binding.getRoot().setOnLongClickListener(new View.OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View v) {
+//                    Handler handler = new Handler();
+//                    User user = new User();
+//                    user.id = chatMessage.conversionId;
+//                    user.name= chatMessage.conversionName;
+//                    user.image = chatMessage.conversionImage;
+//                    handler.postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            conversionListener.onConversionHold(user);
+//                        }
+//                    }, 1000);
+//                    return true;
+//                }
+//            });
+            binding.getRoot().setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    User user = new User();
+                    user.id = chatMessage.conversionId;
+                    user.name = chatMessage.conversionName;
+                    user.image = chatMessage.conversionImage;
+                    conversionListener.onConversionHold(user);
+                    return true;
+                }
+            });
+
+
         }
     }
     private Bitmap getConversionImage(String encodedImage){

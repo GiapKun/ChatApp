@@ -3,6 +3,7 @@ package com.example.chatandcall_app.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Application;
 import android.content.Context;
@@ -12,9 +13,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,12 +30,17 @@ import com.example.chatandcall_app.models.ChatMessage;
 import com.example.chatandcall_app.models.User;
 import com.example.chatandcall_app.utilities.Constants;
 import com.example.chatandcall_app.utilities.PreferenceManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -55,6 +64,7 @@ public class MainActivity extends BaseActivity implements ConversionListener {
     private List<ChatMessage> conversations;
     private RecentConversationsAdapter conversationsAdapter;
     private FirebaseFirestore database;
+    private int currentPosition = RecyclerView.NO_POSITION;
 
 
     ImageButton buttonDrawerToggle;
@@ -145,6 +155,7 @@ public class MainActivity extends BaseActivity implements ConversionListener {
         });
     }
 
+    //Load thông tin
     private void loadUserDetails(){
         View headerView = navigationView.getHeaderView(0);
         TextView textName = headerView.findViewById(R.id.textName);
@@ -162,6 +173,7 @@ public class MainActivity extends BaseActivity implements ConversionListener {
         Toast.makeText(getApplicationContext(), message,Toast.LENGTH_SHORT).show();
     }
 
+    //Lấy token trên máy
     private void getToken(){
         FirebaseMessaging.getInstance().getToken().addOnSuccessListener(this::updateToken);
     }
@@ -190,7 +202,7 @@ public class MainActivity extends BaseActivity implements ConversionListener {
                 .addOnFailureListener(e -> showToast("Unable to sign out"));
     }
     
-    //Call
+    //Set up call video
     private void startService(String senderID,String senderName) {
         Application application = getApplication(); // Android's application context
         long appID = 968668767;   // yourAppID
@@ -209,6 +221,7 @@ public class MainActivity extends BaseActivity implements ConversionListener {
     }
 
 
+    //Event click Conversion
     @Override
     public void onConversionClicked(User user) {
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
@@ -216,6 +229,126 @@ public class MainActivity extends BaseActivity implements ConversionListener {
         startActivity(intent);
     }
 
+    //Event hold conversion 
+    public void onConversionHold(User user) {
+    binding.conversationsRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+        @Override
+        public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+            if (e.getAction() == MotionEvent.ACTION_DOWN) { // Kiểm tra khi nào người dùng bắt đầu hold
+                View childView = rv.findChildViewUnder(e.getX(), e.getY());
+                if (childView != null) {
+                    currentPosition = rv.getChildAdapterPosition(childView);
+                    showPopupMenu(user);
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+        }
+
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+        }
+    });
+}
+
+    private void showPopupMenu(User user) {
+        if (currentPosition >= 0) {
+            PopupMenu popupMenu = new PopupMenu(getApplicationContext(), binding.conversationsRecyclerView.getChildAt(currentPosition));
+            popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                public boolean onMenuItemClick(MenuItem item) {
+                    if (item.getItemId() == R.id.item1) {
+                        deleteConversation(user.id, preferecnceManager.getString(Constants.KEY_USER_ID));
+                        deleteConversation(preferecnceManager.getString(Constants.KEY_USER_ID), user.id);
+                    }
+                    return true;
+                }
+            });
+            popupMenu.show();
+        }
+    }
+
+
+
+    // Xóa trò chuyện và xóa chat
+    public void deleteConversation(String senderId, String receiverId){
+        database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
+                .whereEqualTo(Constants.KEY_SENDER_ID,senderId)
+                .whereEqualTo(Constants.KEY_RECEIVER_ID,receiverId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null){
+                            for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                                // Get the document ID
+                                String documentId = queryDocumentSnapshot.getId();
+
+                                // Delete the document
+                                database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
+                                        .document(documentId)
+                                        .delete()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                // Sau khi xóa conversation, cập nhật giao diện:
+                                                conversations.removeIf(conversation -> conversation.senderId.equals(senderId) && conversation.receiverId.equals(receiverId));
+                                                conversationsAdapter.notifyDataSetChanged();
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w("Results", "Error deleting conservation", e);
+                                            }
+                                        });
+                            }
+                        }
+                    }
+                });
+    }
+
+    public void deleteChats(String senderId, String receiverId) {
+        database.collection(Constants.KEY_COLLECTION_CHAT)
+                .whereEqualTo(Constants.KEY_SENDER_ID, senderId)
+                .whereEqualTo(Constants.KEY_RECEIVER_ID, receiverId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                                // Get the document ID
+                                String documentId = queryDocumentSnapshot.getId();
+
+                                // Delete the document
+                                database.collection(Constants.KEY_COLLECTION_CHAT)
+                                        .document(documentId)
+                                        .delete()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d("Results", "Chat deleted successfully");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w("Results", "Error deleting chat", e);
+                                            }
+                                        });
+                            }
+                        }
+
+                    }
+                });
+    }
+
+
+    // Lắng nghe các sự thay đổi về tin nhắn với, và cuộc trò chuyện mới
     private void listenConversations() {
         database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
                 .whereEqualTo(Constants.KEY_SENDER_ID, preferecnceManager.getString(Constants.KEY_USER_ID))
