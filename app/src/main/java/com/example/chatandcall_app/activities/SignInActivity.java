@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
@@ -42,6 +43,23 @@ public class SignInActivity extends AppCompatActivity {
         binding.buttonSignIn.setOnClickListener(v -> {
             if(isValidSignInDetails()){
                 signIn();
+            }
+        });
+        binding.buttonTogglePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Xử lý sự kiện khi người dùng nhấn vào Button để chuyển đổi giữa hiển thị và ẩn password
+                if (binding.inputPassword.getInputType() == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD) {
+                    // Nếu đang hiển thị password, chuyển sang chế độ ẩn password
+                    binding.inputPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    // Thiết lập biểu tượng cho Button để hiển thị biểu tượng ẩn password
+                    binding.buttonTogglePassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_eye, 0);
+                } else {
+                    // Nếu đang ẩn password, chuyển sang chế độ hiển thị password
+                    binding.inputPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    // Thiết lập biểu tượng cho Button để hiển thị biểu tượng hiển thị password
+                    binding.buttonTogglePassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_eyeoff, 0);
+                }
             }
         });
     }

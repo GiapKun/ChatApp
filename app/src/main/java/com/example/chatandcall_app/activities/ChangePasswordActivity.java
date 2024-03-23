@@ -5,11 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.chatandcall_app.R;
 import com.example.chatandcall_app.databinding.ActivityChangePasswordBinding;
 import com.example.chatandcall_app.utilities.Constants;
 import com.example.chatandcall_app.utilities.PreferenceManager;
@@ -53,6 +57,24 @@ public class ChangePasswordActivity extends AppCompatActivity {
                updatePassword(binding.inputNewPassword.getText().toString().trim());
            }
         });
+        binding.buttonTogglePassword.setOnClickListener(v -> togglePasswordVisibility(binding.buttonTogglePassword, binding.inputPassword));
+        binding.buttonToggleNewPassword.setOnClickListener(v -> togglePasswordVisibility(binding.buttonToggleNewPassword, binding.inputNewPassword));
+        binding.buttonToggleConfirmNewPassword.setOnClickListener(v -> togglePasswordVisibility(binding.buttonToggleConfirmNewPassword, binding.inputConfirmNewPassword));
+    }
+
+    private void togglePasswordVisibility(Button button, EditText editText) {
+        // Xử lý sự kiện khi người dùng nhấn vào Button để chuyển đổi giữa hiển thị và ẩn password
+        if (editText.getInputType() == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD) {
+            // Nếu đang hiển thị password, chuyển sang chế độ ẩn password
+            editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            // Thiết lập biểu tượng cho Button để hiển thị biểu tượng ẩn password
+            button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_eye, 0);
+        } else {
+            // Nếu đang ẩn password, chuyển sang chế độ hiển thị password
+            editText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            // Thiết lập biểu tượng cho Button để hiển thị biểu tượng hiển thị password
+            button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_eyeoff, 0);
+        }
     }
 
     private void updatePassword(String newPassword) {
