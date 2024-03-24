@@ -45,7 +45,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
     private void setOnListeners(){
         binding.imageBack.setOnClickListener(v-> {
-            startActivity(new Intent(getApplicationContext(), Send_OTP_Activity.class));
+            startActivity(new Intent(getApplicationContext(), SignInActivity.class));
             finish();
         });
         binding.buttonToggleNewPassword.setOnClickListener(v -> togglePasswordVisibility(binding.buttonToggleNewPassword, binding.inputNewPassword));

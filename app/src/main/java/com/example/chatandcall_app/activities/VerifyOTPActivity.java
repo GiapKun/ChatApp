@@ -4,8 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.chatandcall_app.R;
@@ -42,6 +45,11 @@ public class VerifyOTPActivity extends AppCompatActivity {
     }
 
     private void setListener() {
+        addAutoNextTextWatcher(binding.inputCode1,binding.inputCode2);
+        addAutoNextTextWatcher(binding.inputCode2,binding.inputCode3);
+        addAutoNextTextWatcher(binding.inputCode3,binding.inputCode4);
+        addAutoNextTextWatcher(binding.inputCode4,binding.inputCode5);
+        addAutoNextTextWatcher(binding.inputCode5,binding.inputCode6);
         binding.imageBack.setOnClickListener(v -> onBackPressed());
         binding.buttonVerify.setOnClickListener(v -> {
             String inputCode1 = binding.inputCode1.getText().toString();
@@ -149,4 +157,27 @@ public class VerifyOTPActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
     }
+
+    //Auto action next
+    private void addAutoNextTextWatcher(final EditText currentEditText, final EditText nextEditText) {
+        currentEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // không cần thiết
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() == 1) {
+                    nextEditText.requestFocus();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // không cần thiết
+            }
+        });
+    }
+
 }
