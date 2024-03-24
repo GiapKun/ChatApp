@@ -16,4 +16,16 @@
     <string name="change_password">Change Password</string>
     <string name="new_password">New Password</string>
     <string name="confirm_new_password">Confirm New Password</string>
+
+    <string name="otp_verification">OTP Verification</string>
+    <string name="content">We will send you an OTP on this email</string>
+    <string name="enter_email">Enter Email</string>
+    <string name="your_mail">abc@gmail.com</string>
+    <string name="mail_here">Email: </string>
+    <string name="get_otp">GET OTP</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="enter_the_otp_sent_to">Enter the OTP sent to</string>
+    <string name="didn_t_receive_the_otp">Didn\'t receive the OTP?</string>
+    <string name="verify">Verify</string>
+    <string name="resend_otp">RESEND OTP</string>
 </resources>

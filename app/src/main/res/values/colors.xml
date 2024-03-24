@@ -21,4 +21,6 @@
     <color name="color_edittext">#14000000</color>
     <color name="white2">#F5F5F5</color>
     <color name="dark_toolbar">#43000000</color>
+    <color name="divider">#BDBDBD</color>
+    <color name="accent">#F44336</color>
 </resources>

@@ -40,6 +40,8 @@ public class SignInActivity extends AppCompatActivity {
     private  void setListeners(){
         binding.textCreateNewAccount.setOnClickListener(v->
                 startActivity(new Intent(getApplicationContext(), SignUpActivity.class)));
+        binding.textForgotPassword.setOnClickListener(v->
+                startActivity(new Intent(getApplicationContext(), Send_OTP_Activity.class)));
         binding.buttonSignIn.setOnClickListener(v -> {
             if(isValidSignInDetails()){
                 signIn();

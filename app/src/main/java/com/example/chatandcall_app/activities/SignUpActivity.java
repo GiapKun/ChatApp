@@ -62,7 +62,7 @@ public class SignUpActivity extends AppCompatActivity {
     private void setListeners(){
         binding.textSignIn.setOnClickListener(v -> onBackPressed());
         binding.buttonSignUp.setOnClickListener(v -> {
-//            if (isValidSignUpDetails()){
+            if (isValidSignUpDetails()){
                 String receiverEmail = binding.inputEmail.getText().toString().trim();
                 checkAvailable(receiverEmail, new OnCheckAvailableListener() {
                     @Override
@@ -82,7 +82,7 @@ public class SignUpActivity extends AppCompatActivity {
                         }
                     }
                 });
-//            }
+            }
         });
 
         binding.buttonTogglePassword.setOnClickListener(v -> togglePasswordVisibility(binding.buttonTogglePassword, binding.inputPassword));
