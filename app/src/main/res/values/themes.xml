@@ -61,6 +61,11 @@
         <item name="android:backgroundTint">@color/color_edittext</item>
         <item name="android:drawableLeft">@drawable/ic_lock1</item>
     </style>
+
+    <style name="btnTogglePassword">
+        <item name="android:drawableTint">@color/secondary_text</item>
+    </style>
+
     <style name="EdtUsername">
         <item name="android:textColorHint">@color/secondary_text</item>
         <item name="android:textColor">@color/secondary_text</item>

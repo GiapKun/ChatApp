@@ -229,7 +229,7 @@ public class MainActivity extends BaseActivity implements ConversionListener {
         startActivity(intent);
     }
 
-    //Event hold conversion 
+    //Event hold conversion
     public void onConversionHold(User user) {
     binding.conversationsRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
         @Override

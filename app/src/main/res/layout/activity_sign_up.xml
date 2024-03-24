@@ -89,37 +89,71 @@
             android:paddingEnd="@dimen/_16sdp"
             android:textSize="@dimen/_13ssp" />
 
-        <EditText
-            android:id="@+id/inputPassword"
-            style="@style/EdtPassword"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_45sdp"
-            android:layout_marginTop="@dimen/_16sdp"
-            android:background="@drawable/background_input"
-            android:drawablePadding="@dimen/_8sdp"
-            android:hint="@string/password"
-            android:imeOptions="actionNext"
-            android:importantForAutofill="no"
-            android:inputType="textPassword"
-            android:paddingStart="@dimen/_6sdp"
-            android:paddingEnd="@dimen/_16sdp"
-            android:textSize="@dimen/_13ssp" />
+            android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/inputConfirmPassword"
-            style="@style/EdtPassword"
+            <EditText
+                android:id="@+id/inputPassword"
+                style="@style/EdtPassword"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_45sdp"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:background="@drawable/background_input"
+                android:drawablePadding="@dimen/_8sdp"
+                android:hint="@string/password"
+                android:imeOptions="actionNext"
+                android:importantForAutofill="no"
+                android:inputType="textPassword"
+                android:paddingStart="@dimen/_6sdp"
+                android:paddingEnd="@dimen/_6sdp"
+                android:textSize="@dimen/_13ssp" />
+
+            <Button
+                android:id="@+id/buttonTogglePassword"
+                style="@style/btnTogglePassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@id/inputPassword"
+                android:layout_alignTop="@id/inputPassword"
+                android:layout_alignBottom="@id/inputPassword"
+                android:background="?attr/selectableItemBackground"
+                android:drawableEnd="@drawable/ic_eye" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_45sdp"
-            android:layout_marginTop="@dimen/_16sdp"
-            android:background="@drawable/background_input"
-            android:drawablePadding="@dimen/_8sdp"
-            android:hint="@string/confirm_password"
-            android:imeOptions="actionNext"
-            android:importantForAutofill="no"
-            android:inputType="textPassword"
-            android:paddingStart="@dimen/_6sdp"
-            android:paddingEnd="@dimen/_16sdp"
-            android:textSize="@dimen/_13ssp" />
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/inputConfirmPassword"
+                style="@style/EdtPassword"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_45sdp"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:background="@drawable/background_input"
+                android:drawablePadding="@dimen/_8sdp"
+                android:hint="@string/confirm_password"
+                android:imeOptions="actionNext"
+                android:importantForAutofill="no"
+                android:inputType="textPassword"
+                android:paddingStart="@dimen/_6sdp"
+                android:paddingEnd="@dimen/_16sdp"
+                android:textSize="@dimen/_13ssp" />
+
+            <Button
+                android:id="@+id/buttonToggleConfirmPassword"
+                style="@style/btnTogglePassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@id/inputConfirmPassword"
+                android:layout_alignTop="@id/inputConfirmPassword"
+                android:layout_alignBottom="@id/inputConfirmPassword"
+                android:background="?attr/selectableItemBackground"
+                android:drawableEnd="@drawable/ic_eye" />
+
+        </RelativeLayout>
 
         <FrameLayout
             android:layout_width="match_parent"

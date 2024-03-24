@@ -17,11 +17,13 @@ import android.text.InputType;
 import android.util.Base64;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.chatandcall_app.R;
 import com.example.chatandcall_app.databinding.ActivitySignUpBinding;
 import com.example.chatandcall_app.utilities.Constants;
 import com.example.chatandcall_app.utilities.PreferenceManager;
@@ -60,7 +62,7 @@ public class SignUpActivity extends AppCompatActivity {
     private void setListeners(){
         binding.textSignIn.setOnClickListener(v -> onBackPressed());
         binding.buttonSignUp.setOnClickListener(v -> {
-//            if (isValidSignUpDetails()){
+            if (isValidSignUpDetails()){
                 String receiverEmail = binding.inputEmail.getText().toString().trim();
                 checkAvailable(receiverEmail, new OnCheckAvailableListener() {
                     @Override
@@ -80,14 +82,28 @@ public class SignUpActivity extends AppCompatActivity {
                         }
                     }
                 });
-//            }
+            }
         });
-        //Select img
-        binding.layoutImage.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            pickImage.launch(intent);
-        });
+
+        binding.buttonTogglePassword.setOnClickListener(v -> togglePasswordVisibility(binding.buttonTogglePassword, binding.inputPassword));
+        binding.buttonToggleConfirmPassword.setOnClickListener(v -> togglePasswordVisibility(binding.buttonToggleConfirmPassword, binding.inputConfirmPassword));
+
+
+    }
+
+    private void togglePasswordVisibility(Button button, EditText editText) {
+        // Xử lý sự kiện khi người dùng nhấn vào Button để chuyển đổi giữa hiển thị và ẩn password
+        if (editText.getInputType() == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD) {
+            // Nếu đang hiển thị password, chuyển sang chế độ ẩn password
+            editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            // Thiết lập biểu tượng cho Button để hiển thị biểu tượng ẩn password
+            button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_eye, 0);
+        } else {
+            // Nếu đang ẩn password, chuyển sang chế độ hiển thị password
+            editText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            // Thiết lập biểu tượng cho Button để hiển thị biểu tượng hiển thị password
+            button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_eyeoff, 0);
+        }
     }
 
     private void checkAvailable(String email, OnCheckAvailableListener listener) {
