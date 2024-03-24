@@ -33,15 +33,16 @@
             android:src="@drawable/img_received"/>
 
         <TextView
+            style="@style/TextColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:text="@string/otp_verification"
             android:textStyle="bold"
-            android:textSize="20sp"
-            android:textColor="@color/priramy_text"/>
+            android:textSize="20sp" />
 
         <TextView
+            style="@style/TextColor2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
@@ -49,8 +50,7 @@
             android:layout_marginEnd="50dp"
             android:gravity="center"
             android:text="@string/enter_the_otp_sent_to"
-            android:textSize="14sp"
-            android:textColor="@color/secondary_text"/>
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/textMobile"
@@ -72,6 +72,7 @@
             android:orientation="horizontal">
 
             <EditText
+                style="@style/TextColor"
                 android:id="@+id/inputCode1"
                 android:layout_width="40dp"
                 android:layout_height="45dp"
@@ -80,7 +81,6 @@
                 android:importantForAutofill="no"
                 android:inputType="number"
                 android:maxLength="1"
-                android:textColor="@color/priramy_text"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 tools:ignore="LabelFor"/>
@@ -95,7 +95,7 @@
                 android:importantForAutofill="no"
                 android:inputType="number"
                 android:maxLength="1"
-                android:textColor="@color/priramy_text"
+                style="@style/TextColor"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 tools:ignore="LabelFor"/>
@@ -110,7 +110,7 @@
                 android:importantForAutofill="no"
                 android:inputType="number"
                 android:maxLength="1"
-                android:textColor="@color/priramy_text"
+                style="@style/TextColor"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 tools:ignore="LabelFor"/>
@@ -125,7 +125,7 @@
                 android:importantForAutofill="no"
                 android:inputType="number"
                 android:maxLength="1"
-                android:textColor="@color/priramy_text"
+                style="@style/TextColor"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 tools:ignore="LabelFor"/>
@@ -140,7 +140,7 @@
                 android:importantForAutofill="no"
                 android:inputType="number"
                 android:maxLength="1"
-                android:textColor="@color/priramy_text"
+                style="@style/TextColor"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 tools:ignore="LabelFor"/>
@@ -155,7 +155,7 @@
                 android:importantForAutofill="no"
                 android:inputType="number"
                 android:maxLength="1"
-                android:textColor="@color/priramy_text"
+                style="@style/TextColor"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 tools:ignore="LabelFor"/>
@@ -173,7 +173,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/didn_t_receive_the_otp"
-                android:textColor="@color/secondary_text"
+                style="@style/TextColor2"
                 android:textSize="14sp"/>
 
             <TextView
