@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.example.chatandcall_app.adapters.ChatAdapter;
 import com.example.chatandcall_app.databinding.ActivityChatBinding;
+import com.example.chatandcall_app.listeners.ChatListener;
 import com.example.chatandcall_app.models.ChatMessage;
 import com.example.chatandcall_app.models.User;
 import com.example.chatandcall_app.network.ApiClient;
@@ -40,7 +41,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.security.Permission;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,7 +60,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ChatActivity extends BaseActivity {
+public class ChatActivity extends BaseActivity implements ChatListener {
 
     private static final  int Pick_Image_Request = 1;
     private ActivityChatBinding binding;
@@ -111,7 +111,8 @@ public class ChatActivity extends BaseActivity {
         chatAdapter = new ChatAdapter(
                 chatMessages,
                 getBitmapFromEncodedString(receiverUser.image),
-                preferecnceManager.getString(Constants.KEY_USER_ID)
+                preferecnceManager.getString(Constants.KEY_USER_ID),
+                this
         );
         binding.chatRecyclerView.setAdapter(chatAdapter);
         database = FirebaseFirestore.getInstance();
@@ -169,6 +170,13 @@ public class ChatActivity extends BaseActivity {
             }
         });
         binding.layoutPicture.setOnClickListener(v -> selectImage());
+    }
+
+
+    @Override
+    public void removeItem(int Position) {
+        chatMessages.remove(Position);
+        chatAdapter.notifyDataSetChanged();
     }
 
     // Call video
