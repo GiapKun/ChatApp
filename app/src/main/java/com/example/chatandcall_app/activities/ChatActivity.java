@@ -1,14 +1,23 @@
 package com.example.chatandcall_app.activities;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.example.chatandcall_app.adapters.ChatAdapter;
 import com.example.chatandcall_app.databinding.ActivityChatBinding;
@@ -32,6 +41,15 @@ import com.permissionx.guolindev.PermissionX;
 import com.permissionx.guolindev.callback.ExplainReasonCallback;
 import com.permissionx.guolindev.callback.RequestCallback;
 import com.permissionx.guolindev.request.ExplainScope;
+import com.zegocloud.uikit.plugin.invitation.ZegoInvitationType;
+import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallConfig;
+import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallFragment;
+import com.zegocloud.uikit.prebuilt.call.config.DurationUpdateListener;
+import com.zegocloud.uikit.prebuilt.call.config.ZegoCallDurationConfig;
+import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig;
+import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationService;
+import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoCallInvitationData;
+import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoUIKitPrebuiltCallConfigProvider;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 
 
@@ -40,6 +58,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -61,8 +80,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ChatActivity extends BaseActivity implements ChatListener {
-
-    private static final  int Pick_Image_Request = 1;
+    
     private ActivityChatBinding binding;
     private User receiverUser;
     private List<ChatMessage> chatMessages;
@@ -71,6 +89,7 @@ public class ChatActivity extends BaseActivity implements ChatListener {
     private FirebaseFirestore database;
     private String conversionId = null;
     private Boolean isReceiverAvailable = false;
+    private final int PICK_IMAGE_CAMERA = 1, PICK_IMAGE_GALLERY = 2;
     public static final MediaType JSON
             = MediaType.get("application/json; charset=utf-8");
     OkHttpClient client = new OkHttpClient.Builder()
@@ -116,6 +135,7 @@ public class ChatActivity extends BaseActivity implements ChatListener {
         );
         binding.chatRecyclerView.setAdapter(chatAdapter);
         database = FirebaseFirestore.getInstance();
+        startService(preferecnceManager.getString(Constants.KEY_USER_ID),preferecnceManager.getString(Constants.KEY_NAME));
     }
 
     private Bitmap getBitmapFromEncodedString(String encodedImage){
@@ -165,7 +185,7 @@ public class ChatActivity extends BaseActivity implements ChatListener {
                         callApiInBackground(question);
                 }
                 else {
-                        sendMessage();
+                        sendMessage(binding.inputMessage.getText().toString().trim());
                 }
             }
         });
@@ -299,7 +319,7 @@ public class ChatActivity extends BaseActivity implements ChatListener {
         database.collection(Constants.KEY_COLLECTION_CHAT).add(message);
 
         if (conversionId != null) {
-            updateConversion(binding.inputMessage.getText().toString().trim());
+            updateConversion("Result is .....");
         }
         else {
             HashMap<String, Object> conversion = new HashMap<>();
@@ -367,34 +387,94 @@ public class ChatActivity extends BaseActivity implements ChatListener {
 
     //Chon anh tu thiet bi
     private void selectImage() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), Pick_Image_Request);
+        try {
+            PackageManager pm = getPackageManager();
+            int hasPerm = pm.checkPermission(Manifest.permission.CAMERA, getPackageName());
+            if (hasPerm == PackageManager.PERMISSION_GRANTED) {
+                final CharSequence[] options = {"Take Photo", "Choose From Gallery","Cancel"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
+                builder.setTitle("Select Option");
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (options[item].equals("Take Photo")) {
+                            dialog.dismiss();
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(intent, PICK_IMAGE_CAMERA);
+                        } else if (options[item].equals("Choose From Gallery")) {
+                            dialog.dismiss();
+                            Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            startActivityForResult(pickPhoto, PICK_IMAGE_GALLERY);
+                        } else if (options[item].equals("Cancel")) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                builder.show();
+            } else
+                Toast.makeText(this, "Camera Permission error", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Camera Permission error", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
     }
+
+
 
     // Xử lý kết quả sau khi người dùng chọn hình ảnh
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        if (requestCode == PICK_IMAGE_CAMERA && resultCode == Activity.RESULT_OK) {
+            try {
+                Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+                // Chuyển đổi Bitmap thành Uri
+                Uri imageUri = getImageUri(getApplicationContext(), imageBitmap);
+                // Lưu hình ảnh vào Firebase Storage
+                String imageName = UUID.randomUUID().toString();
+                StorageReference imageRef = storageRef.child("images/" + imageName);
+                imageRef.putFile(imageUri)
+                        .addOnSuccessListener(taskSnapshot -> {
+                            // Xử lý thành công
+                             sendImage(imageName);
+                        })
+                        .addOnFailureListener(e -> {
+                            // Xử lý khi lưu hình ảnh thất bại
+                        });
 
-        if (requestCode == Pick_Image_Request && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            Uri imageUri = data.getData();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (requestCode == PICK_IMAGE_GALLERY && resultCode == Activity.RESULT_OK) {
+            try {
+                Uri imageUri = data.getData();
+                // Lưu hình ảnh vào Firebase Storage
+                String imageName = UUID.randomUUID().toString();
+                StorageReference imageRef = storageRef.child("images/" + imageName);
+                imageRef.putFile(imageUri)
+                        .addOnSuccessListener(taskSnapshot -> {
+                            // Xử lý thành công
+                             sendImage(imageName);
+                        })
+                        .addOnFailureListener(e -> {
+                            // Xử lý khi lưu hình ảnh thất bại
+                        });
 
-            // Lưu hình ảnh vào Firebase Storage
-            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-            String imageName = UUID.randomUUID().toString();
-            StorageReference imageRef = storageRef.child("images/" + imageName);
-            imageRef.putFile(imageUri)
-                    .addOnSuccessListener(taskSnapshot -> {
-                        // Xử lý thành công
-                        sendImage(imageName);
-                    })
-                    .addOnFailureListener(e -> {
-                        // Xử lý khi lưu hình ảnh thất bại
-                    });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
+
+    //  chuyển đổi Bitmap thành Uri
+    private Uri getImageUri(Context context, Bitmap bitmap) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap, "Title", null);
+        return Uri.parse(path);
+    }
+
 
 
 
@@ -457,16 +537,16 @@ public class ChatActivity extends BaseActivity implements ChatListener {
     }
 
     // Gửi tin nhắn
-    private void sendMessage(){
+    private void sendMessage(String messs){
         HashMap<String , Object> message = new HashMap<>();
         message.put(Constants.KEY_SENDER_ID, preferecnceManager.getString(Constants.KEY_USER_ID));
         message.put(Constants.KEY_RECEIVER_ID,receiverUser.id);
-        message.put(Constants.KEY_MESSAGE,binding.inputMessage.getText().toString().trim());
+        message.put(Constants.KEY_MESSAGE,messs);
         message.put(Constants.KEY_TIMESTAMP, new Date());
         database.collection(Constants.KEY_COLLECTION_CHAT).add(message);
 
         if (conversionId != null) {
-            updateConversion(binding.inputMessage.getText().toString().trim());
+            updateConversion(messs);
         }
         else {
             HashMap<String, Object> conversion = new HashMap<>();
@@ -476,7 +556,7 @@ public class ChatActivity extends BaseActivity implements ChatListener {
             conversion.put(Constants.KEY_RECEIVER_ID,receiverUser.id );
             conversion.put(Constants.KEY_RECEIVER_NAME,receiverUser.name );
             conversion.put(Constants.KEY_RECEIVER_IMAGE,receiverUser.image );
-            conversion.put(Constants.KEY_LAST_MESSAGE,binding.inputMessage.getText().toString().trim() );
+            conversion.put(Constants.KEY_LAST_MESSAGE,messs );
             conversion.put(Constants.KEY_TIMESTAMP,new Date());
             addConversion(conversion);
         }
@@ -489,7 +569,7 @@ public class ChatActivity extends BaseActivity implements ChatListener {
                 data.put(Constants.KEY_USER_ID,preferecnceManager.getString(Constants.KEY_USER_ID));
                 data.put(Constants.KEY_NAME,preferecnceManager.getString(Constants.KEY_NAME));
                 data.put(Constants.KEY_FCM_TOKEN,preferecnceManager.getString(Constants.KEY_FCM_TOKEN));
-                data.put(Constants.KEY_MESSAGE,binding.inputMessage.getText().toString().trim());
+                data.put(Constants.KEY_MESSAGE,messs);
 
                 JSONObject body = new JSONObject();
                 body.put(Constants.REMOTE_MSG_DATA, data);
@@ -613,6 +693,62 @@ public class ChatActivity extends BaseActivity implements ChatListener {
                         binding.textAvailability.setVisibility(View.GONE);
                     }
                 });
+    }
+
+
+    //Call
+    private void startService(String senderID,String senderName) {
+        Application application = getApplication(); // Android's application context
+        long appID = 968668767;   // yourAppID
+        String appSign ="7f143ce516bbacf0ffa0c8cf65e552a0cde048208836623acf0ad2f66cf6bcb4";  // yourAppSign
+//        String userName = userID; // yourUserID, userID should only contain numbers, English characters, and '_'.
+        String userID = senderID; // yourUserID, userID should only contain numbers, English characters, and '_'.
+        String userName = senderName;   // yourUserName
+
+//        ZegoUIKitPrebuiltCallInvitationConfig callInvitationConfig = new ZegoUIKitPrebuiltCallInvitationConfig();
+//        ZegoUIKitPrebuiltCallInvitationService.init(getApplication(), appID, appSign, userID, userName,callInvitationConfig);
+        ZegoUIKitPrebuiltCallInvitationConfig callInvitationConfig = new ZegoUIKitPrebuiltCallInvitationConfig();
+        callInvitationConfig.provider = new ZegoUIKitPrebuiltCallConfigProvider() {
+            long durationSeconds = 0;
+            @Override
+            public ZegoUIKitPrebuiltCallConfig requireConfig(ZegoCallInvitationData invitationData) {
+                ZegoUIKitPrebuiltCallConfig config = null;
+                boolean isVideoCall = invitationData.type == ZegoInvitationType.VIDEO_CALL.getValue();
+                long times = 0;
+                boolean isGroupCall = invitationData.invitees.size() > 1;
+                if (isVideoCall && isGroupCall) {
+                    config = ZegoUIKitPrebuiltCallConfig.groupVideoCall();
+                } else if (!isVideoCall && isGroupCall) {
+                    config = ZegoUIKitPrebuiltCallConfig.groupVoiceCall();
+                } else if (!isVideoCall) {
+                    config = ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall();
+                } else {
+                    config = ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall();
+                }
+                config.durationConfig = new ZegoCallDurationConfig();
+                config.durationConfig.isVisible = true;
+                config.leaveCallListener = new ZegoUIKitPrebuiltCallFragment.LeaveCallListener() {
+                    @Override
+                    public void onLeaveCall() {
+                        sendMessage("Đã thực hiện cuộc gọi trong "+String.valueOf(durationSeconds)+"s");
+                        ZegoUIKitPrebuiltCallInvitationService.endCall();
+                    }
+                };
+                config.durationConfig.durationUpdateListener = new DurationUpdateListener() {
+                    @Override
+                    public void onDurationUpdate(long seconds) {
+                        durationSeconds = seconds;
+                    }
+                };
+                return config;
+            }
+        };
+        ZegoUIKitPrebuiltCallInvitationService.init(getApplication(), appID, appSign, userID, userName,callInvitationConfig);
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ZegoUIKitPrebuiltCallInvitationService.unInit();
     }
 
 }
