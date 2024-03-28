@@ -89,4 +89,7 @@ dependencies {
     // define any required OkHttp artifacts without version
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:logging-interceptor")
+
+    //PhotoView
+    implementation("com.github.chrisbanes:PhotoView:2.3.0")
 }
