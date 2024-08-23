@@ -72,23 +72,6 @@ public class RecentConversationsAdapter extends RecyclerView.Adapter<RecentConve
                 conversionListener.onConversionClicked(user);
             });
 
-//            binding.getRoot().setOnLongClickListener(new View.OnLongClickListener() {
-//                @Override
-//                public boolean onLongClick(View v) {
-//                    Handler handler = new Handler();
-//                    User user = new User();
-//                    user.id = chatMessage.conversionId;
-//                    user.name= chatMessage.conversionName;
-//                    user.image = chatMessage.conversionImage;
-//                    handler.postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            conversionListener.onConversionHold(user);
-//                        }
-//                    }, 1000);
-//                    return true;
-//                }
-//            });
             binding.getRoot().setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {

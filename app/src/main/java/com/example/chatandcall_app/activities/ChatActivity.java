@@ -245,7 +245,7 @@ public class ChatActivity extends BaseActivity implements ChatListener {
         Request request = new Request.Builder()
                 .url("\n" +
                         "https://api.openai.com/v1/chat/completions")
-                .header("Authorization","Bearer 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")
+                .header("Authorization","Bearer token")
                 .post(body)
                 .build();
 
@@ -699,8 +699,8 @@ public class ChatActivity extends BaseActivity implements ChatListener {
     //Call
     private void startService(String senderID,String senderName) {
         Application application = getApplication(); // Android's application context
-        long appID = 968668767;   // yourAppID
-        String appSign ="7f143ce516bbacf0ffa0c8cf65e552a0cde048208836623acf0ad2f66cf6bcb4";  // yourAppSign
+        long appID = 123456;   // yourAppID
+        String appSign =".....";  // yourAppSign
 //        String userName = userID; // yourUserID, userID should only contain numbers, English characters, and '_'.
         String userID = senderID; // yourUserID, userID should only contain numbers, English characters, and '_'.
         String userName = senderName;   // yourUserName

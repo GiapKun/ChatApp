@@ -208,61 +208,7 @@ public class MainActivity extends BaseActivity implements ConversionListener {
                 })
                 .addOnFailureListener(e -> showToast("Unable to sign out"));
     }
-    
-    //Set up call video
-//    private void startService(String senderID,String senderName) {
-//        Application application = getApplication(); // Android's application context
-//        long appID = 968668767;   // yourAppID
-//        String appSign ="7f143ce516bbacf0ffa0c8cf65e552a0cde048208836623acf0ad2f66cf6bcb4";  // yourAppSign
-////        String userName = userID; // yourUserID, userID should only contain numbers, English characters, and '_'.
-//        String userID = senderID; // yourUserID, userID should only contain numbers, English characters, and '_'.
-//        String userName = senderName;   // yourUserName
-//
-////        ZegoUIKitPrebuiltCallInvitationConfig callInvitationConfig = new ZegoUIKitPrebuiltCallInvitationConfig();
-////        ZegoUIKitPrebuiltCallInvitationService.init(getApplication(), appID, appSign, userID, userName,callInvitationConfig);
-//        ZegoUIKitPrebuiltCallInvitationConfig callInvitationConfig = new ZegoUIKitPrebuiltCallInvitationConfig();
-//        callInvitationConfig.provider = new ZegoUIKitPrebuiltCallConfigProvider() {
-//            long durationSeconds = 0;
-//            @Override
-//            public ZegoUIKitPrebuiltCallConfig requireConfig(ZegoCallInvitationData invitationData) {
-//                ZegoUIKitPrebuiltCallConfig config = null;
-//                boolean isVideoCall = invitationData.type == ZegoInvitationType.VIDEO_CALL.getValue();
-//                long times = 0;
-//                boolean isGroupCall = invitationData.invitees.size() > 1;
-//                if (isVideoCall && isGroupCall) {
-//                    config = ZegoUIKitPrebuiltCallConfig.groupVideoCall();
-//                } else if (!isVideoCall && isGroupCall) {
-//                    config = ZegoUIKitPrebuiltCallConfig.groupVoiceCall();
-//                } else if (!isVideoCall) {
-//                    config = ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall();
-//                } else {
-//                    config = ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall();
-//                }
-//                config.durationConfig = new ZegoCallDurationConfig();
-//                config.durationConfig.isVisible = true;
-//                config.leaveCallListener = new ZegoUIKitPrebuiltCallFragment.LeaveCallListener() {
-//                    @Override
-//                    public void onLeaveCall() {
-//
-//                        ZegoUIKitPrebuiltCallInvitationService.endCall();
-//                    }
-//                };
-//                config.durationConfig.durationUpdateListener = new DurationUpdateListener() {
-//                    @Override
-//                    public void onDurationUpdate(long seconds) {
-//                        durationSeconds = seconds;
-//                    }
-//                };
-//                return config;
-//            }
-//        };
-//        ZegoUIKitPrebuiltCallInvitationService.init(getApplication(), appID, appSign, userID, userName,callInvitationConfig);
-//    }
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        ZegoUIKitPrebuiltCallInvitationService.unInit();
-//    }
+
 
     //Event click Conversion
     @Override
